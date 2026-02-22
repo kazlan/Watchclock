@@ -8,15 +8,17 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
         name: 'Watchclock Focus',
         short_name: 'Watchclock',
         description: 'A beautiful dashboard with timers and a clock for deep work sessions.',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
+        theme_color: '#020617',
+        background_color: '#020617',
         display: 'standalone',
         orientation: 'landscape',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-192x192.png',
