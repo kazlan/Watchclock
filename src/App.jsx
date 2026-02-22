@@ -33,9 +33,7 @@ const TIMERS_CONFIG = [
 ];
 
 function App() {
-  const [theme, setTheme] = useState(
-    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  );
+  const [theme, setTheme] = useState('dark');
   const [activeTimerId, setActiveTimerId] = useState(null);
   const [runningTimerId, setRunningTimerId] = useState(null);
   const [activeEndTime, setActiveEndTime] = useState(null);
