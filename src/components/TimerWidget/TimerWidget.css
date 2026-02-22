@@ -1,0 +1,227 @@
+.timer-widget {
+    width: 100%;
+    height: 120px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.timer-widget:active {
+    transform: scale(0.98);
+}
+
+.section-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.text-val {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.text-lbl {
+    font-size: 1rem;
+    font-weight: 300;
+    opacity: 0.8;
+}
+
+.section-circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    /* Start at top */
+}
+
+.ring-bg {
+    fill: transparent;
+    stroke-width: 6;
+}
+
+.ring-fill {
+    fill: transparent;
+    stroke: var(--widget-color);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+.circle-inner-num {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    z-index: 2;
+}
+
+.circle-inner-icon {
+    color: var(--widget-color);
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 4px;
+    /* Slight optical adjustment for play button */
+}
+
+.reset-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 50%;
+    transform: translateX(50%);
+    font-size: 0.7rem;
+    opacity: 0;
+    color: var(--text-secondary);
+    transition: opacity 0.3s;
+}
+
+.timer-widget:hover .reset-hint {
+    opacity: 1;
+}
+
+/* ================== LIGHT MODE WIDGET (Neumorphism / Frosted) ================== */
+
+.light-widget {
+    background: var(--timer-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+        0 10px 30px rgba(0, 0, 0, 0.05),
+        -5px -5px 15px rgba(255, 255, 255, 0.6);
+    justify-content: space-between;
+}
+
+.light-widget .section-circle {
+    border-radius: 50%;
+    background: transparent;
+    box-shadow:
+        inset 3px 3px 6px rgba(166, 193, 214, 0.3),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.light-widget .ring-bg {
+    stroke: rgba(166, 193, 214, 0.2);
+}
+
+.light-widget .section-text {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.light-widget .text-val {
+    color: var(--text-primary);
+}
+
+.light-widget .text-lbl {
+    color: var(--text-secondary);
+}
+
+.section-alt-icon {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.alt-icon-ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.alt-ring-bg {
+    fill: transparent;
+    stroke: rgba(166, 193, 214, 0.3);
+    stroke-width: 3;
+}
+
+.alt-ring-fill {
+    fill: transparent;
+    stroke: var(--widget-color);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear;
+}
+
+.alt-icon-wrapper {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: var(--timer-bg);
+    box-shadow:
+        2px 2px 5px rgba(166, 193, 214, 0.3),
+        -2px -2px 5px rgba(255, 255, 255, 0.8);
+    color: var(--widget-color);
+    z-index: 2;
+}
+
+.alt-icon-wrapper svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* ================== DARK MODE WIDGET (Cyber Neon) ================== */
+
+.dark-widget {
+    background: transparent;
+    border: 1px solid var(--widget-color);
+    box-shadow:
+        inset 0 0 20px rgba(255, 255, 255, 0.02),
+        0 0px 20px rgba(0, 0, 0, 0.4),
+        0 0px 10px var(--widget-color);
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.dark-widget .section-text {
+    padding-left: 10px;
+}
+
+.dark-widget .text-val {
+    color: var(--widget-color);
+    text-shadow: 0 0 8px var(--widget-color);
+    font-weight: 600;
+}
+
+.dark-widget .text-lbl {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.dark-widget .ring-bg {
+    stroke: rgba(255, 255, 255, 0.05);
+}
+
+.dark-widget .glow-ring {
+    filter: drop-shadow(0 0 4px var(--widget-color));
+}
+
+.dark-widget .circle-inner-icon svg {
+    filter: drop-shadow(0 0 3px var(--widget-color));
+}

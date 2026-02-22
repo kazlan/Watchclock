@@ -1,0 +1,7 @@
+<svg xmlns="http://www. কণ্ঠেw3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#0d1117" rx="100"/>
+  <circle cx="256" cy="256" r="150" fill="none" stroke="#58a6ff" stroke-width="24"/>
+  <circle cx="256" cy="256" r="24" fill="#ff7b72"/>
+  <line x1="256" y1="256" x2="256" y2="150" stroke="#c9d1d9" stroke-width="16" stroke-linecap="round"/>
+  <line x1="256" y1="256" x2="320" y2="256" stroke="#8b949e" stroke-width="12" stroke-linecap="round"/>
+</svg>
