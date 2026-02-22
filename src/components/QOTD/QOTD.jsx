@@ -12,7 +12,7 @@ const QUOTES = [
 ];
 
 export default function QOTD({ theme, isHidden }) {
-    const [quoteIndex, setQuoteIndex] = useState(0);
+    const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * QUOTES.length));
     const [fadeState, setFadeState] = useState('fade-in');
 
     useEffect(() => {
