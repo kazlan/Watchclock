@@ -1,6 +1,8 @@
 import { useState, useEffect, Fragment } from 'react'
 import AnalogClock from './components/AnalogClock/AnalogClock'
+import DigitalClock from './components/DigitalClock/DigitalClock'
 import TimerWidget from './components/TimerWidget/TimerWidget'
+import QOTD from './components/QOTD/QOTD'
 import './index.css'
 import './App.css'
 
@@ -77,6 +79,7 @@ function App() {
             <div className="clock-wrapper">
               <AnalogClock theme={theme} />
             </div>
+            <DigitalClock theme={theme} />
           </section>
 
           <section className="right-panel">
@@ -97,6 +100,8 @@ function App() {
                 </div>
               ))}
             </div>
+
+            <QOTD theme={theme} isHidden={!!runningTimerId} />
 
             {TIMERS_CONFIG.map(timer => {
               const isVideoVisible = runningTimerId === timer.id;

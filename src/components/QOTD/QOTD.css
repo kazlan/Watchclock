@@ -1,0 +1,59 @@
+.qotd-container {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 0 1rem;
+    text-align: center;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.qotd-hidden {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    visibility: hidden;
+    transform: translateY(-20px);
+}
+
+.qotd-content {
+    transition: opacity 1s ease-in-out;
+}
+
+.qotd-content.fade-in {
+    opacity: 1;
+}
+
+.qotd-content.fade-out {
+    opacity: 0;
+}
+
+.qotd-text {
+    font-size: 1.1rem;
+    font-style: italic;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+    line-height: പാലര1.4;
+}
+
+.qotd-author {
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Light Theme */
+.light-qotd .qotd-text,
+.light-qotd .qotd-author {
+    color: var(--text-secondary);
+}
+
+/* Dark Theme */
+.dark-qotd .qotd-text {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.dark-qotd .qotd-author {
+    color: var(--widget-color);
+}

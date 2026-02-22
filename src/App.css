@@ -10,9 +10,10 @@
 .left-panel {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  /* Push clock near to center if there is space */
+  justify-content: center;
+  gap: 2rem;
   position: relative;
 }
 
@@ -42,11 +43,13 @@
 }
 
 .right-panel {
-  flex: 0 0 450px;
+  flex: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   position: relative;
+  height: 100%;
 }
 
 .timers-row {
