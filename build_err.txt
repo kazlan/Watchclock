@@ -4,19 +4,31 @@
 
 [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
 transforming...
-[32mÔ£ô[39m 15 modules transformed.
-Ô£ù Build failed in 155ms
+[32mÔ£ô[39m 39 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mregisterSW.js              [39m[1m[2m  0.13 kB[22m[1m[22m
+[2mdist/[22m[32mmanifest.webmanifest       [39m[1m[2m  0.51 kB[22m[1m[22m
+[2mdist/[22m[32mindex.html                 [39m[1m[2m  1.14 kB[22m[1m[22m[2m Ôöé gzip:  0.54 kB[22m
+[2mdist/[22m[35massets/index-2R4YaEBh.css  [39m[1m[2m 14.56 kB[22m[1m[22m[2m Ôöé gzip:  3.63 kB[22m
+[2mdist/[22m[36massets/index-KU-XzgVS.js   [39m[1m[2m206.50 kB[22m[1m[22m[2m Ôöé gzip: 65.30 kB[22m
+[32mÔ£ô built in 646ms[39m
 error during build:
-[vite-plugin-pwa:build] [plugin vite-plugin-pwa:build] src/App.jsx: There was an error during the build:
-  Could not resolve "./components/DigitalClock/DigitalClock" from "src/App.jsx"
-Additionally, handling the error in the 'buildEnd' hook caused the following error:
-  Could not resolve "./components/DigitalClock/DigitalClock" from "src/App.jsx"
-file: C:/Users/perse/OneDrive/Documentos/1. PROYECTOS/Watchclock/src/App.jsx
-    at getRollupError (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
-    at file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:23467:39
-    at async catchUnfinishedHookActions (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:22925:16)
-    at async rollupInternal (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:23450:5)
-    at async buildEnvironment (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33541:12)
+Error: 
+  Configure "workbox.maximumFileSizeToCacheInBytes" to change the limit: the default value is 2 MiB.
+  Check https://vite-pwa-org.netlify.app/guide/faq.html#missing-assets-from-sw-precache-manifest for more information.
+  Assets exceeding the limit:
+  - work.mp4 is 4.4 MB, and won't be precached.
+  - lunch.mp4 is 4.78 MB, and won't be precached.
+  - coffee.mp4 is 3.63 MB, and won't be precached.
+
+    at logWorkboxResult (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite-plugin-pwa/dist/chunk-G4TAN34B.js:44:13)
+    at generateServiceWorker (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite-plugin-pwa/dist/index.js:209:3)
+    at async _generateSW (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite-plugin-pwa/dist/index.js:234:5)
+    at async Object.handler (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite-plugin-pwa/dist/index.js:427:13)
+    at async PluginDriver.hookParallel (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:22475:17)
+    at async Object.close (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:23494:13)
+    at async buildEnvironment (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33555:15)
     at async Object.build (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33900:19)
     at async Object.buildApp (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33897:153)
     at async CAC.<anonymous> (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/cli.js:629:3)
