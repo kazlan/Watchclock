@@ -39,6 +39,7 @@ function App() {
   const [activeTimerId, setActiveTimerId] = useState(null);
   const [runningTimerId, setRunningTimerId] = useState(null);
   const [activeEndTime, setActiveEndTime] = useState(null);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const wakeLockRef = useRef(null);
 
   useEffect(() => {
@@ -83,9 +84,11 @@ function App() {
     if (isRunning) {
       setRunningTimerId(id);
       setActiveEndTime(endTime);
+      setIsVideoLoaded(false);
     } else if (runningTimerId === id) {
       setRunningTimerId(null);
       setActiveEndTime(null);
+      setIsVideoLoaded(false);
     }
   };
 
@@ -93,6 +96,7 @@ function App() {
     setActiveTimerId('stop');
     setRunningTimerId(null);
     setActiveEndTime(null);
+    setIsVideoLoaded(false);
   };
 
   useEffect(() => {
@@ -153,7 +157,7 @@ function App() {
               return (
                 <div
                   key={`video-${timer.id}`}
-                  className="video-container video-visible"
+                  className={`video-container video-visible ${isVideoLoaded ? 'is-loaded' : ''}`}
                   onClick={stopActiveTimer}
                 >
                   <video
@@ -163,6 +167,7 @@ function App() {
                     muted
                     playsInline
                     className="work-video"
+                    onCanPlay={() => setIsVideoLoaded(true)}
                   />
                   <div className="video-progress-track">
                     <div className="video-progress-bar"></div>
