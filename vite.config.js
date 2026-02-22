@@ -21,8 +21,8 @@ export default defineConfig({
         description: 'A beautiful dashboard with timers and a clock for deep work sessions.',
         theme_color: '#020617',
         background_color: '#020617',
-        display: 'fullscreen',
-        orientation: 'landscape',
+        display: 'standalone',
+        display_override: ['fullscreen', 'standalone', 'minimal-ui'],
         start_url: '/',
         icons: [
           {
