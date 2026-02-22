@@ -72,18 +72,24 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
                 setIsRunning(false);
                 setEndTime(null);
                 document.documentElement.style.setProperty('--timer-progress', 1);
+                document.documentElement.style.setProperty('--timer-color', 'hsl(0, 100%, 50%)'); // Red
                 sendNotification(`${durationMinutes} Min ${title} terminado`, 'Es hora de continuar.');
                 if (onRunningChange) onRunningChange(id, false);
             } else {
                 setTimeLeftMs(difference);
                 const currentProgress = (totalMs - difference) / totalMs;
+                const hue = Math.floor(120 * (1 - currentProgress)); // 120 (Green) down to 0 (Red)
                 document.documentElement.style.setProperty('--timer-progress', currentProgress);
+                document.documentElement.style.setProperty('--timer-color', `hsl(${hue}, 100%, 45%)`);
                 animationRef.current = requestAnimationFrame(updateTime);
             }
         };
 
         if (isRunning) {
-            document.documentElement.style.setProperty('--timer-progress', (totalMs - timeLeftMs) / totalMs);
+            const currentProgress = (totalMs - timeLeftMs) / totalMs;
+            const hue = Math.floor(120 * (1 - currentProgress));
+            document.documentElement.style.setProperty('--timer-progress', currentProgress);
+            document.documentElement.style.setProperty('--timer-color', `hsl(${hue}, 100%, 45%)`);
             animationRef.current = requestAnimationFrame(updateTime);
         } else if (animationRef.current) {
             cancelAnimationFrame(animationRef.current);

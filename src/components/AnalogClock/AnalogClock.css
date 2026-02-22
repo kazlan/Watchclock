@@ -1,12 +1,13 @@
 .clock-container {
     width: 100%;
     aspect-ratio: 1 / 1;
-    max-width: 480px;
-    max-height: 480px;
+    max-width: 380px;
+    max-height: 380px;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
+    margin: 0 auto;
 }
 
 .clock-face {

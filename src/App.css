@@ -3,15 +3,16 @@
   display: flex;
   width: 100%;
   height: 100%;
-  gap: 2rem;
-  padding: 2.5rem;
+  gap: 6rem;
+  padding: 3rem;
 }
 
 .left-panel {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  /* Push clock near to center if there is space */
   position: relative;
 }
 
@@ -66,11 +67,11 @@
   transform: translateY(-20px);
 }
 
-/* Hidden header toggle for testing */
+/* Utility header toggle for testing */
 .utility-header {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 25px;
+  left: 25px;
   z-index: 100;
 }
 
@@ -78,17 +79,25 @@
   background: transparent;
   border: 1px solid var(--text-secondary);
   color: var(--text-secondary);
-  padding: 4px 12px;
-  border-radius: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  font-family: inherit;
-  font-size: 0.8rem;
-  opacity: 0.3;
-  transition: opacity 0.2s;
+  opacity: 0.5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle-btn svg {
+  stroke-width: 1.5;
 }
 
 .theme-toggle-btn:hover {
   opacity: 1;
+  background: rgba(128, 128, 128, 0.1);
+  transform: scale(1.05);
 }
 
 .video-container {
@@ -133,8 +142,9 @@
 .video-progress-bar {
   height: 100%;
   width: calc((1 - var(--timer-progress, 0)) * 100%);
-  background: color-mix(in srgb, #ef4444 calc(var(--timer-progress, 0) * 100%), #ffffff);
+  background: var(--timer-color, #22c55e);
   transition: width 0.1s linear, background 0.1s linear;
+  border-radius: 0 4px 4px 0;
 }
 
 [data-theme='light'] .video-container.video-visible {
@@ -166,8 +176,8 @@
   .dashboard-grid {
     height: auto;
     min-height: 100%;
-    padding: 1.5rem;
-    gap: 1.5rem;
+    padding: 2rem 3rem;
+    gap: 2.5rem;
     flex-direction: row;
     align-items: center;
   }
