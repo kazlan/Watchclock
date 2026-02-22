@@ -73,8 +73,8 @@
 /* Utility header toggle for testing */
 .utility-header {
   position: absolute;
-  top: 25px;
-  left: 25px;
+  top: 15px;
+  left: 15px;
   z-index: 100;
 }
 
@@ -82,8 +82,8 @@
   background: transparent;
   border: 1px solid var(--text-secondary);
   color: var(--text-secondary);
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
