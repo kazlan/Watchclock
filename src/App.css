@@ -195,14 +195,14 @@
 
   .timers-row {
     flex-direction: row;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: center;
     justify-content: space-between;
   }
 
   /* Make sure timer wrappers don't squash */
   .timer-wrapper {
-    flex-shrink: 0;
+    flex: 1;
     /* CRITICAL: Prevent flex from crushing the widgets */
     min-height: 80px;
     height: auto;

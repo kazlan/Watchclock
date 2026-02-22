@@ -74,7 +74,6 @@ function App() {
 
         <main className="dashboard-grid">
           <section className="left-panel">
-            {theme === 'light' && <div className="left-panel-bg"></div>}
             <div className="clock-wrapper">
               <AnalogClock theme={theme} />
             </div>
