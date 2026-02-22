@@ -57,33 +57,34 @@ function App() {
 
           <section className="right-panel">
             {TIMERS_CONFIG.map(timer => {
-              if (runningTimerId && runningTimerId !== timer.id) return null;
+              const isHidden = runningTimerId && runningTimerId !== timer.id;
+              const isVideoVisible = runningTimerId === timer.id;
 
               return (
                 <Fragment key={timer.id}>
-                  <TimerWidget
-                    id={timer.id}
-                    title={timer.title}
-                    durationMinutes={timer.duration}
-                    colorVar={timer.colorVar}
-                    theme={theme}
-                    icon={timer.icon}
-                    activeTimerId={activeTimerId}
-                    onActivate={setActiveTimerId}
-                    onRunningChange={handleRunningChange}
-                  />
-                  {runningTimerId === timer.id && (
-                    <div className="video-container">
-                      <video
-                        src={timer.video}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="work-video"
-                      />
-                    </div>
-                  )}
+                  <div className={`timer-wrapper ${isHidden ? 'hidden-timer' : ''}`}>
+                    <TimerWidget
+                      id={timer.id}
+                      title={timer.title}
+                      durationMinutes={timer.duration}
+                      colorVar={timer.colorVar}
+                      theme={theme}
+                      icon={timer.icon}
+                      activeTimerId={activeTimerId}
+                      onActivate={setActiveTimerId}
+                      onRunningChange={handleRunningChange}
+                    />
+                  </div>
+                  <div className={`video-container ${isVideoVisible ? 'video-visible' : 'video-hidden'}`}>
+                    <video
+                      src={timer.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="work-video"
+                    />
+                  </div>
                 </Fragment>
               );
             })}
