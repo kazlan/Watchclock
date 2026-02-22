@@ -25,6 +25,11 @@ function App() {
     }
   };
 
+  const stopActiveTimer = () => {
+    setActiveTimerId('stop');
+    setRunningTimerId(null);
+  };
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
@@ -56,36 +61,46 @@ function App() {
           </section>
 
           <section className="right-panel">
+            <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
+              {TIMERS_CONFIG.map(timer => (
+                <div key={timer.id} className="timer-wrapper">
+                  <TimerWidget
+                    id={timer.id}
+                    title={timer.title}
+                    durationMinutes={timer.duration}
+                    colorVar={timer.colorVar}
+                    theme={theme}
+                    icon={timer.icon}
+                    activeTimerId={activeTimerId}
+                    onActivate={setActiveTimerId}
+                    onRunningChange={handleRunningChange}
+                  />
+                </div>
+              ))}
+            </div>
+
             {TIMERS_CONFIG.map(timer => {
-              const isHidden = runningTimerId && runningTimerId !== timer.id;
               const isVideoVisible = runningTimerId === timer.id;
+              if (!isVideoVisible) return null;
 
               return (
-                <Fragment key={timer.id}>
-                  <div className={`timer-wrapper ${isHidden ? 'hidden-timer' : ''}`}>
-                    <TimerWidget
-                      id={timer.id}
-                      title={timer.title}
-                      durationMinutes={timer.duration}
-                      colorVar={timer.colorVar}
-                      theme={theme}
-                      icon={timer.icon}
-                      activeTimerId={activeTimerId}
-                      onActivate={setActiveTimerId}
-                      onRunningChange={handleRunningChange}
-                    />
+                <div
+                  key={`video-${timer.id}`}
+                  className="video-container video-visible"
+                  onClick={stopActiveTimer}
+                >
+                  <video
+                    src={timer.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="work-video"
+                  />
+                  <div className="video-progress-track">
+                    <div className="video-progress-bar"></div>
                   </div>
-                  <div className={`video-container ${isVideoVisible ? 'video-visible' : 'video-hidden'}`}>
-                    <video
-                      src={timer.video}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="work-video"
-                    />
-                  </div>
-                </Fragment>
+                </div>
               );
             })}
           </section>

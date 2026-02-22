@@ -105,9 +105,10 @@ body {
   font-family: 'Outfit', sans-serif;
   background-color: var(--bg-base);
   color: var(--text-primary);
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: background-color 0.5s ease;
   user-select: none;
   -webkit-touch-callout: none;
@@ -198,15 +199,13 @@ body {
 .tablet-frame {
   width: 100%;
   max-width: 1200px;
-  height: 100%;
-  max-height: 800px;
+  min-height: 100%;
   background: var(--app-panel-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 32px;
   box-shadow: var(--app-panel-shadow);
   position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }

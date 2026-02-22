@@ -71,15 +71,19 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
                 setTimeLeftMs(0);
                 setIsRunning(false);
                 setEndTime(null);
+                document.documentElement.style.setProperty('--timer-progress', 1);
                 sendNotification(`${durationMinutes} Min ${title} terminado`, 'Es hora de continuar.');
                 if (onRunningChange) onRunningChange(id, false);
             } else {
                 setTimeLeftMs(difference);
+                const currentProgress = (totalMs - difference) / totalMs;
+                document.documentElement.style.setProperty('--timer-progress', currentProgress);
                 animationRef.current = requestAnimationFrame(updateTime);
             }
         };
 
         if (isRunning) {
+            document.documentElement.style.setProperty('--timer-progress', (totalMs - timeLeftMs) / totalMs);
             animationRef.current = requestAnimationFrame(updateTime);
         } else if (animationRef.current) {
             cancelAnimationFrame(animationRef.current);
@@ -128,7 +132,7 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
             {/* Light mode: Circle with number on the LEFT */}
             {theme === 'light' && (
                 <div className="section-circle">
-                    <svg className="progress-ring" width="100" height="100">
+                    <svg className="progress-ring" viewBox="0 0 100 100">
                         <circle className="ring-bg" cx="50" cy="50" r={radius} />
                         <circle
                             className="ring-fill"
@@ -151,7 +155,7 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
             {/* Dark mode: Circle with icon inside on the RIGHT */}
             {theme === 'dark' && (
                 <div className="section-circle">
-                    <svg className="progress-ring" width="100" height="100">
+                    <svg className="progress-ring" viewBox="0 0 100 100">
                         <circle className="ring-bg" cx="50" cy="50" r={radius} />
                         <circle
                             className="ring-fill glow-ring"
