@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import AnalogClock from './components/AnalogClock/AnalogClock'
 import DigitalClock from './components/DigitalClock/DigitalClock'
 import TimerWidget from './components/TimerWidget/TimerWidget'
@@ -39,6 +39,45 @@ function App() {
   const [activeTimerId, setActiveTimerId] = useState(null);
   const [runningTimerId, setRunningTimerId] = useState(null);
   const [activeEndTime, setActiveEndTime] = useState(null);
+  const wakeLockRef = useRef(null);
+
+  useEffect(() => {
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLockRef.current = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+      }
+    };
+
+    const releaseWakeLock = async () => {
+      if (wakeLockRef.current !== null) {
+        await wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      }
+    };
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && runningTimerId) {
+        await requestWakeLock();
+      }
+    };
+
+    if (runningTimerId) {
+      requestWakeLock();
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    } else {
+      releaseWakeLock();
+    }
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      releaseWakeLock();
+    };
+  }, [runningTimerId]);
+
 
   const handleRunningChange = (id, isRunning, endTime) => {
     if (isRunning) {

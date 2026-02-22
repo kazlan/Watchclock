@@ -1,0 +1,22 @@
+
+> watchclock@0.0.0 build
+> vite build
+
+[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+[32mÔ£ô[39m 15 modules transformed.
+Ô£ù Build failed in 155ms
+error during build:
+[vite-plugin-pwa:build] [plugin vite-plugin-pwa:build] src/App.jsx: There was an error during the build:
+  Could not resolve "./components/DigitalClock/DigitalClock" from "src/App.jsx"
+Additionally, handling the error in the 'buildEnd' hook caused the following error:
+  Could not resolve "./components/DigitalClock/DigitalClock" from "src/App.jsx"
+file: C:/Users/perse/OneDrive/Documentos/1. PROYECTOS/Watchclock/src/App.jsx
+    at getRollupError (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:23467:39
+    at async catchUnfinishedHookActions (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:22925:16)
+    at async rollupInternal (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/rollup/dist/es/shared/node-entry.js:23450:5)
+    at async buildEnvironment (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33541:12)
+    at async Object.build (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33900:19)
+    at async Object.buildApp (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/chunks/config.js:33897:153)
+    at async CAC.<anonymous> (file:///C:/Users/perse/OneDrive/Documentos/1.%20PROYECTOS/Watchclock/node_modules/vite/dist/node/cli.js:629:3)
