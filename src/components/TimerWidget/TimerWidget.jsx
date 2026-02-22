@@ -41,7 +41,7 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
         setEndTime(null);
         setTimeLeftMs(totalMs);
         if (animationRef.current) cancelAnimationFrame(animationRef.current);
-        if (onRunningChange) onRunningChange(id, false);
+        if (onRunningChange) onRunningChange(id, false, null);
     };
 
     useEffect(() => {
@@ -74,7 +74,7 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
                 document.documentElement.style.setProperty('--timer-progress', 1);
                 document.documentElement.style.setProperty('--timer-color', 'hsl(0, 100%, 50%)'); // Red
                 sendNotification(`${durationMinutes} Min ${title} terminado`, 'Es hora de continuar.');
-                if (onRunningChange) onRunningChange(id, false);
+                if (onRunningChange) onRunningChange(id, false, null);
             } else {
                 setTimeLeftMs(difference);
                 const currentProgress = (totalMs - difference) / totalMs;
@@ -105,13 +105,14 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
             // Pause
             setIsRunning(false);
             setEndTime(null);
-            if (onRunningChange) onRunningChange(id, false);
+            if (onRunningChange) onRunningChange(id, false, null);
         } else {
             // Start or Resume
+            const newEndTime = Date.now() + timeLeftMs;
             setIsRunning(true);
-            setEndTime(Date.now() + timeLeftMs);
+            setEndTime(newEndTime);
             if (onActivate) onActivate(id);
-            if (onRunningChange) onRunningChange(id, true);
+            if (onRunningChange) onRunningChange(id, true, newEndTime);
         }
     };
 

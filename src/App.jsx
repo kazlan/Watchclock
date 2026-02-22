@@ -38,18 +38,22 @@ function App() {
   );
   const [activeTimerId, setActiveTimerId] = useState(null);
   const [runningTimerId, setRunningTimerId] = useState(null);
+  const [activeEndTime, setActiveEndTime] = useState(null);
 
-  const handleRunningChange = (id, isRunning) => {
+  const handleRunningChange = (id, isRunning, endTime) => {
     if (isRunning) {
       setRunningTimerId(id);
+      setActiveEndTime(endTime);
     } else if (runningTimerId === id) {
       setRunningTimerId(null);
+      setActiveEndTime(null);
     }
   };
 
   const stopActiveTimer = () => {
     setActiveTimerId('stop');
     setRunningTimerId(null);
+    setActiveEndTime(null);
   };
 
   useEffect(() => {
@@ -79,7 +83,7 @@ function App() {
             <div className="clock-wrapper">
               <AnalogClock theme={theme} />
             </div>
-            <DigitalClock theme={theme} />
+            <DigitalClock theme={theme} endTime={activeEndTime} />
           </section>
 
           <section className="right-panel">
