@@ -27,7 +27,7 @@ const StopIcon = () => (
     </svg>
 );
 
-export default function TimerWidget({ title, durationMinutes, colorVar, theme, icon }) {
+export default function TimerWidget({ id, title, durationMinutes, colorVar, theme, icon, activeTimerId, onActivate, onRunningChange }) {
     // Store the target end time (in ms) when the timer is running
     const [endTime, setEndTime] = useState(null);
     const [timeLeftMs, setTimeLeftMs] = useState(durationMinutes * 60 * 1000);
@@ -35,6 +35,20 @@ export default function TimerWidget({ title, durationMinutes, colorVar, theme, i
     const animationRef = useRef(null);
 
     const totalMs = durationMinutes * 60 * 1000;
+
+    const resetTimer = () => {
+        setIsRunning(false);
+        setEndTime(null);
+        setTimeLeftMs(totalMs);
+        if (animationRef.current) cancelAnimationFrame(animationRef.current);
+        if (onRunningChange) onRunningChange(id, false);
+    };
+
+    useEffect(() => {
+        if (activeTimerId !== null && activeTimerId !== id && (isRunning || timeLeftMs !== totalMs)) {
+            resetTimer();
+        }
+    }, [activeTimerId, id, isRunning, timeLeftMs, totalMs]);
 
     // Progress goes from 0 to 1
     const progress = isRunning ? ((totalMs - timeLeftMs) / totalMs) : 0;
@@ -58,6 +72,7 @@ export default function TimerWidget({ title, durationMinutes, colorVar, theme, i
                 setIsRunning(false);
                 setEndTime(null);
                 sendNotification(`${durationMinutes} Min ${title} terminado`, 'Es hora de continuar.');
+                if (onRunningChange) onRunningChange(id, false);
             } else {
                 setTimeLeftMs(difference);
                 animationRef.current = requestAnimationFrame(updateTime);
@@ -80,18 +95,14 @@ export default function TimerWidget({ title, durationMinutes, colorVar, theme, i
             // Pause
             setIsRunning(false);
             setEndTime(null);
+            if (onRunningChange) onRunningChange(id, false);
         } else {
             // Start or Resume
             setIsRunning(true);
             setEndTime(Date.now() + timeLeftMs);
+            if (onActivate) onActivate(id);
+            if (onRunningChange) onRunningChange(id, true);
         }
-    };
-
-    const resetTimer = () => {
-        setIsRunning(false);
-        setEndTime(null);
-        setTimeLeftMs(totalMs);
-        if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
 
     const formatTime = (ms) => {

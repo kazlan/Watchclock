@@ -72,3 +72,35 @@
 .theme-toggle-btn:hover {
   opacity: 1;
 }
+.video-container {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.work-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+[data-theme='light'] .video-container {
+  border-color: rgba(0,0,0,0.08);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+[data-theme='dark'] .video-container {
+  border-color: rgba(255,255,255,0.05);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+

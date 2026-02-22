@@ -1,13 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import AnalogClock from './components/AnalogClock/AnalogClock'
 import TimerWidget from './components/TimerWidget/TimerWidget'
 import './index.css'
 import './App.css'
 
+const TIMERS_CONFIG = [
+  { id: 'focus', title: 'Focus', duration: 10, colorVar: '--timer-focus', icon: 'play', video: '/work.mp4' },
+  { id: 'coffee', title: 'Coffee', duration: 5, colorVar: '--timer-coffee', icon: 'coffee', video: '/coffee.mp4' },
+  { id: 'lunch', title: 'Lunch', duration: 20, colorVar: '--timer-lunch', icon: 'lunch', video: '/lunch.mp4' },
+];
+
 function App() {
   const [theme, setTheme] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   );
+  const [activeTimerId, setActiveTimerId] = useState(null);
+  const [runningTimerId, setRunningTimerId] = useState(null);
+
+  const handleRunningChange = (id, isRunning) => {
+    if (isRunning) {
+      setRunningTimerId(id);
+    } else if (runningTimerId === id) {
+      setRunningTimerId(null);
+    }
+  };
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -40,27 +56,37 @@ function App() {
           </section>
 
           <section className="right-panel">
-            <TimerWidget
-              title="Focus"
-              durationMinutes={10}
-              colorVar="--timer-focus"
-              theme={theme}
-              icon="play"
-            />
-            <TimerWidget
-              title="Coffee"
-              durationMinutes={5}
-              colorVar="--timer-coffee"
-              theme={theme}
-              icon="coffee"
-            />
-            <TimerWidget
-              title="Lunch"
-              durationMinutes={20}
-              colorVar="--timer-lunch"
-              theme={theme}
-              icon="lunch"
-            />
+            {TIMERS_CONFIG.map(timer => {
+              if (runningTimerId && runningTimerId !== timer.id) return null;
+
+              return (
+                <Fragment key={timer.id}>
+                  <TimerWidget
+                    id={timer.id}
+                    title={timer.title}
+                    durationMinutes={timer.duration}
+                    colorVar={timer.colorVar}
+                    theme={theme}
+                    icon={timer.icon}
+                    activeTimerId={activeTimerId}
+                    onActivate={setActiveTimerId}
+                    onRunningChange={handleRunningChange}
+                  />
+                  {runningTimerId === timer.id && (
+                    <div className="video-container">
+                      <video
+                        src={timer.video}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="work-video"
+                      />
+                    </div>
+                  )}
+                </Fragment>
+              );
+            })}
           </section>
         </main>
       </div>
