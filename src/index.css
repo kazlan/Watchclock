@@ -105,10 +105,9 @@ body {
   font-family: 'Outfit', sans-serif;
   background-color: var(--bg-base);
   color: var(--text-primary);
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   transition: background-color 0.5s ease;
   user-select: none;
   -webkit-touch-callout: none;

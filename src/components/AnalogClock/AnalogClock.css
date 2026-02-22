@@ -197,3 +197,11 @@
     background: var(--accent-clock-s);
     box-shadow: 0 0 15px var(--accent-clock-s);
 }
+
+/* --- Extreme Landscape Scale Down --- */
+@media (max-height: 450px) {
+    .clock-container {
+        max-width: 180px;
+        max-height: 180px;
+    }
+}
