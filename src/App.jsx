@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Fragment } from 'react'
+import { useState, useEffect, useRef, useCallback, Fragment } from 'react'
 import AnalogClock from './components/AnalogClock/AnalogClock'
 import DigitalClock from './components/DigitalClock/DigitalClock'
 import TimerWidget from './components/TimerWidget/TimerWidget'
@@ -26,6 +26,12 @@ const SunIcon = () => (
   </svg>
 );
 
+const BulbIcon = ({ active }) => (
+  <svg viewBox="0 0 24 24" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+    <path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V17a1 1 0 0 1-1 1H10a1 1 0 0 1-1-1v-2.8C7.21 13.16 6 11.22 6 9a6 6 0 0 1 6-6z"></path>
+  </svg>
+);
+
 const TIMERS_CONFIG = [
   { id: 'focus', title: 'Focus', duration: 10, colorVar: '--timer-focus', icon: 'play', video: '/work.mp4' },
   { id: 'coffee', title: 'Coffee', duration: 5, colorVar: '--timer-coffee', icon: 'coffee', video: '/coffee.mp4' },
@@ -38,33 +44,40 @@ function App() {
   const [runningTimerId, setRunningTimerId] = useState(null);
   const [activeEndTime, setActiveEndTime] = useState(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [wakeLockEnabled, setWakeLockEnabled] = useState(false);
   const wakeLockRef = useRef(null);
 
-  useEffect(() => {
-    const requestWakeLock = async () => {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLockRef.current = await navigator.wakeLock.request('screen');
-        }
-      } catch (err) {
-        console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+  const requestWakeLock = useCallback(async () => {
+    try {
+      if ('wakeLock' in navigator && wakeLockRef.current === null) {
+        wakeLockRef.current = await navigator.wakeLock.request('screen');
+        wakeLockRef.current.addEventListener('release', () => {
+          wakeLockRef.current = null;
+        });
       }
-    };
+    } catch (err) {
+      console.error(`Wake Lock error: ${err.name}, ${err.message}`);
+    }
+  }, []);
 
-    const releaseWakeLock = async () => {
-      if (wakeLockRef.current !== null) {
-        await wakeLockRef.current.release();
-        wakeLockRef.current = null;
-      }
-    };
+  const releaseWakeLock = useCallback(async () => {
+    if (wakeLockRef.current !== null) {
+      await wakeLockRef.current.release();
+      wakeLockRef.current = null;
+    }
+  }, []);
+
+  // Wake lock driven by timer running OR manual toggle
+  useEffect(() => {
+    const shouldLock = runningTimerId || wakeLockEnabled;
 
     const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'visible' && runningTimerId) {
+      if (document.visibilityState === 'visible' && shouldLock) {
         await requestWakeLock();
       }
     };
 
-    if (runningTimerId) {
+    if (shouldLock) {
       requestWakeLock();
       document.addEventListener('visibilitychange', handleVisibilityChange);
     } else {
@@ -73,9 +86,11 @@ function App() {
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      releaseWakeLock();
+      if (!shouldLock) releaseWakeLock();
     };
-  }, [runningTimerId]);
+  }, [runningTimerId, wakeLockEnabled, requestWakeLock, releaseWakeLock]);
+
+  const toggleWakeLock = () => setWakeLockEnabled(prev => !prev);
 
 
   const handleRunningChange = (id, isRunning, endTime) => {
@@ -114,6 +129,14 @@ function App() {
       </div>
       <div className="tablet-frame">
         <div className="utility-header">
+          <button
+            onClick={toggleWakeLock}
+            className={`theme-toggle-btn wake-lock-btn${wakeLockEnabled ? ' wake-lock-active' : ''}`}
+            aria-label={wakeLockEnabled ? 'Desactivar pantalla encendida' : 'Mantener pantalla encendida'}
+            title={wakeLockEnabled ? 'Pantalla: siempre encendida' : 'Pantalla: apagado automático'}
+          >
+            <BulbIcon active={wakeLockEnabled} />
+          </button>
           <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle Theme">
             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
           </button>
