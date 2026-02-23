@@ -76,10 +76,10 @@
 .utility-header {
   position: absolute;
   top: 15px;
-  left: 15px;
+  left: 8px;
   z-index: 100;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
 }
 
@@ -87,8 +87,8 @@
   background: transparent;
   border: 1px solid var(--text-secondary);
   color: var(--text-secondary);
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
