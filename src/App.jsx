@@ -4,6 +4,7 @@ import DigitalClock from './components/DigitalClock/DigitalClock'
 import TimerWidget from './components/TimerWidget/TimerWidget'
 import QOTD from './components/QOTD/QOTD'
 import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
+import SpotifyLibrary from './components/SpotifyLibrary/SpotifyLibrary'
 import './index.css'
 import './App.css'
 
@@ -46,6 +47,7 @@ function App() {
   const [activeEndTime, setActiveEndTime] = useState(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [wakeLockEnabled, setWakeLockEnabled] = useState(false);
+  const [showLibrary, setShowLibrary] = useState(false);
   const wakeLockRef = useRef(null);
 
   const requestWakeLock = useCallback(async () => {
@@ -152,57 +154,63 @@ function App() {
           </section>
 
           <section className="right-panel">
-            <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
-              {TIMERS_CONFIG.map(timer => (
-                <div key={timer.id} className="timer-wrapper">
-                  <TimerWidget
-                    id={timer.id}
-                    title={timer.title}
-                    durationMinutes={timer.duration}
-                    colorVar={timer.colorVar}
-                    theme={theme}
-                    icon={timer.icon}
-                    activeTimerId={activeTimerId}
-                    onActivate={setActiveTimerId}
-                    onRunningChange={handleRunningChange}
-                  />
+            {showLibrary ? (
+              <SpotifyLibrary onClose={() => setShowLibrary(false)} />
+            ) : (
+              <>
+                <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
+                  {TIMERS_CONFIG.map(timer => (
+                    <div key={timer.id} className="timer-wrapper">
+                      <TimerWidget
+                        id={timer.id}
+                        title={timer.title}
+                        durationMinutes={timer.duration}
+                        colorVar={timer.colorVar}
+                        theme={theme}
+                        icon={timer.icon}
+                        activeTimerId={activeTimerId}
+                        onActivate={setActiveTimerId}
+                        onRunningChange={handleRunningChange}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            <div className={`player-row ${runningTimerId ? 'player-shifted' : ''}`}>
-              <SpotifyPlayer isHidden={false} />
-            </div>
-
-            <div className={`qotd-row ${runningTimerId ? 'qotd-hidden' : ''}`}>
-              <QOTD theme={theme} isHidden={!!runningTimerId} />
-            </div>
-
-            {TIMERS_CONFIG.map(timer => {
-              const isVideoVisible = runningTimerId === timer.id;
-              if (!isVideoVisible) return null;
-
-              return (
-                <div
-                  key={`video-${timer.id}`}
-                  className={`video-container video-visible ${isVideoLoaded ? 'is-loaded' : ''}`}
-                  onClick={stopActiveTimer}
-                >
-                  <video
-                    src={timer.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="work-video"
-                    onCanPlay={() => setIsVideoLoaded(true)}
-                  />
-                  <div className="video-progress-track">
-                    <div className="video-progress-bar"></div>
-                  </div>
+                <div className={`player-row ${runningTimerId ? 'player-hidden' : ''}`}>
+                  <SpotifyPlayer isHidden={false} onOpenLibrary={() => setShowLibrary(true)} />
                 </div>
-              );
-            })}
+
+                <div className={`qotd-row ${runningTimerId ? 'qotd-hidden' : ''}`}>
+                  <QOTD theme={theme} isHidden={!!runningTimerId} />
+                </div>
+
+                {TIMERS_CONFIG.map(timer => {
+                  const isVideoVisible = runningTimerId === timer.id;
+                  if (!isVideoVisible) return null;
+
+                  return (
+                    <div
+                      key={`video-${timer.id}`}
+                      className={`video-container video-visible ${isVideoLoaded ? 'is-loaded' : ''}`}
+                      onClick={stopActiveTimer}
+                    >
+                      <video
+                        src={timer.video}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="work-video"
+                        onCanPlay={() => setIsVideoLoaded(true)}
+                      />
+                      <div className="video-progress-track">
+                        <div className="video-progress-bar"></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </section>
         </main>
       </div>

@@ -36,7 +36,7 @@ const SpotifyIcon = () => (
 );
 
 
-const SpotifyPlayer = ({ isHidden }) => {
+const SpotifyPlayer = ({ isHidden, onOpenLibrary }) => {
     const [token, setToken] = useState(null);
     const [player, setPlayer] = useState(null);
     const [deviceId, setDeviceId] = useState(null);
@@ -201,7 +201,7 @@ const SpotifyPlayer = ({ isHidden }) => {
 
     return (
         <div className="spotify-container glass-panel spotify-player-active">
-            <div className="sp-album-art">
+            <div className="sp-album-art" onClick={onOpenLibrary} title="Abrir Mi Música">
                 <img
                     src={currentTrack.album.images[0]?.url || ''}
                     alt="Album Art"

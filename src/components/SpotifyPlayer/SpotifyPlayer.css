@@ -63,13 +63,20 @@
 /* Vinyl/Album Art styling */
 .sp-album-art {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     flex-shrink: 0;
     background: #111;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sp-album-art:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .sp-album-art img {
@@ -111,6 +118,7 @@
     flex-direction: column;
     justify-content: center;
     overflow: hidden;
+    padding: 0 0.5rem;
 }
 
 .sp-track-name {
@@ -141,14 +149,14 @@
     background: transparent;
     border: none;
     color: var(--text-primary);
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: opacity 0.2s, background-color 0.2s;
+    transition: opacity 0.2s, background-color 0.2s, transform 0.2s;
     opacity: 0.7;
 }
 
@@ -158,15 +166,15 @@
 }
 
 .sp-play-btn {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     background: var(--text-primary);
     color: var(--bg-base);
     opacity: 1;
 }
 
 .sp-play-btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
     background: var(--text-primary);
 }
 
