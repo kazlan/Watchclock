@@ -33,13 +33,25 @@ export const getTokenFromUrl = () => {
         .substring(1)
         .split('&')
         .reduce((initial, item) => {
-            let parts = item.split('=');
-            initial[parts[0]] = decodeURIComponent(parts[1]);
+            if (item) {
+                let parts = item.split('=');
+                initial[parts[0]] = decodeURIComponent(parts[1]);
+            }
             return initial;
         }, {});
 };
 
 export const extractAndStoreToken = () => {
+    // 1. Check for errors in the query string first
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get('error');
+    if (error) {
+        // Clean up URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return { token: null, error: `Spotify denegó el acceso: ${error}` };
+    }
+
+    // 2. Check hash for access_token
     const hashObj = getTokenFromUrl();
     const accessToken = hashObj.access_token;
 
@@ -52,10 +64,11 @@ export const extractAndStoreToken = () => {
         localStorage.setItem('spotify_token_expiration', expirationTime.toString());
 
         // Clean URL hash so it doesn't stay visible
-        window.location.hash = '';
-        return accessToken;
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return { token: accessToken, error: null };
     }
-    return null;
+
+    return { token: null, error: null };
 };
 
 export const getStoredToken = () => {

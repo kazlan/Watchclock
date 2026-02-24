@@ -66,14 +66,19 @@ const SpotifyPlayer = ({ isHidden }) => {
 
     useEffect(() => {
         // 1. Check URL for token first (we just returned from login)
-        let currentToken = extractAndStoreToken();
+        const parsed = extractAndStoreToken();
+        let currentToken = parsed.token;
+
+        if (parsed.error) {
+            setErrorMsg(parsed.error);
+        }
 
         // 2. If no new token, check localStorage
         if (!currentToken) {
             currentToken = getStoredToken();
         }
 
-        // Quick handle for '/callback' route refresh edge cases
+        // Quick handle for '/callback' route refresh edge cases so it doesn't linger
         if (window.location.pathname === '/callback') {
             window.history.replaceState({}, document.title, '/');
         }

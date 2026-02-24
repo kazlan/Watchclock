@@ -170,7 +170,13 @@ function App() {
               ))}
             </div>
 
-            <QOTD theme={theme} isHidden={!!runningTimerId} />
+            <div className={`player-row ${runningTimerId ? 'player-shifted' : ''}`}>
+              <SpotifyPlayer isHidden={false} />
+            </div>
+
+            <div className={`qotd-row ${runningTimerId ? 'qotd-hidden' : ''}`}>
+              <QOTD theme={theme} isHidden={!!runningTimerId} />
+            </div>
 
             {TIMERS_CONFIG.map(timer => {
               const isVideoVisible = runningTimerId === timer.id;
@@ -197,8 +203,6 @@ function App() {
                 </div>
               );
             })}
-
-            <SpotifyPlayer />
           </section>
         </main>
       </div>
