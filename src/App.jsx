@@ -49,7 +49,24 @@ function App() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [wakeLockEnabled, setWakeLockEnabled] = useState(false);
   const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' | 'library' | 'calendar'
+  const [backViewComponent, setBackViewComponent] = useState('library');
   const wakeLockRef = useRef(null);
+
+  const handleViewChange = (newView) => {
+    if (activeView !== 'dashboard' && newView !== 'dashboard' && activeView !== newView) {
+      // Switching directly between back faces: force a flip through the front
+      setActiveView('dashboard');
+      setTimeout(() => {
+        setBackViewComponent(newView);
+        setActiveView(newView);
+      }, 500); // Wait for the transition to partially obscure the back
+    } else {
+      if (newView !== 'dashboard') {
+        setBackViewComponent(newView);
+      }
+      setActiveView(newView);
+    }
+  };
 
   const requestWakeLock = useCallback(async () => {
     try {
@@ -151,14 +168,14 @@ function App() {
             <div className="clock-wrapper">
               <AnalogClock
                 theme={theme}
-                onClick={() => setActiveView(prev => prev === 'calendar' ? 'dashboard' : 'calendar')}
+                onClick={() => handleViewChange(activeView === 'calendar' ? 'dashboard' : 'calendar')}
               />
             </div>
             <DigitalClock theme={theme} endTime={activeEndTime} />
           </section>
 
           <section className="right-panel">
-            <div className={`flip-wrapper ${activeView === 'library' ? 'show-library' : activeView === 'calendar' ? 'show-calendar' : ''}`}>
+            <div className={`flip-wrapper ${activeView !== 'dashboard' ? 'flipped' : ''}`}>
               <div className="flip-front">
                 <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
                   {TIMERS_CONFIG.map(timer => (
@@ -179,7 +196,7 @@ function App() {
                 </div>
 
                 <div className={`player-row ${runningTimerId ? 'player-hidden' : ''}`}>
-                  <SpotifyPlayer isHidden={false} onOpenLibrary={() => setActiveView('library')} />
+                  <SpotifyPlayer isHidden={false} onOpenLibrary={() => handleViewChange('library')} />
                 </div>
 
                 <div className={`qotd-row ${runningTimerId ? 'qotd-hidden' : ''}`}>
@@ -213,12 +230,13 @@ function App() {
                 })}
               </div>
 
-              <div className="flip-back-library">
-                <SpotifyLibrary onClose={() => setActiveView('dashboard')} isActive={activeView === 'library'} />
-              </div>
-
-              <div className="flip-back-calendar">
-                <CalendarView onClose={() => setActiveView('dashboard')} isActive={activeView === 'calendar'} />
+              <div className="flip-back">
+                {backViewComponent === 'library' && (
+                  <SpotifyLibrary onClose={() => handleViewChange('dashboard')} isActive={activeView === 'library'} />
+                )}
+                {backViewComponent === 'calendar' && (
+                  <CalendarView onClose={() => handleViewChange('dashboard')} isActive={activeView === 'calendar'} />
+                )}
               </div>
             </div>
           </section>

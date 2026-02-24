@@ -98,9 +98,7 @@ export default function CalendarView({ onClose }) {
             </button>
 
             <div className="calendar-header">
-                <button className="cal-nav-btn" onClick={handlePrevMonth}>&lt;</button>
                 <h2>{monthNames[month]} {year}</h2>
-                <button className="cal-nav-btn" onClick={handleNextMonth}>&gt;</button>
             </div>
 
             <div className="calendar-body">

@@ -61,17 +61,12 @@
   transform-style: preserve-3d;
 }
 
-.flip-wrapper.show-library {
-  transform: rotateY(180deg);
-}
-
-.flip-wrapper.show-calendar {
+.flip-wrapper.flipped {
   transform: rotateY(-180deg);
 }
 
 .flip-front,
-.flip-back-library,
-.flip-back-calendar {
+.flip-back {
   top: 0;
   left: 0;
   width: 100%;
@@ -91,12 +86,7 @@
   z-index: 2;
 }
 
-.flip-back-library {
-  position: absolute;
-  transform: rotateY(-180deg);
-}
-
-.flip-back-calendar {
+.flip-back {
   position: absolute;
   transform: rotateY(180deg);
 }
