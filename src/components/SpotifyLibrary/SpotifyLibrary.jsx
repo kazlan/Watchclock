@@ -42,7 +42,8 @@ const SpotifyLibrary = ({ onClose }) => {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Error de red o permisos insuficientes.');
+                    const errorText = await response.text();
+                    throw new Error(`Spotify Error ${response.status}: ${errorText}`);
                 }
 
                 const data = await response.json();
@@ -55,7 +56,7 @@ const SpotifyLibrary = ({ onClose }) => {
 
             } catch (err) {
                 console.error(err);
-                setErrorMsg('No se pudo cargar la librería. ¿Aceptaste los nuevos permisos?');
+                setErrorMsg(`No se pudo cargar la librería: ${err.message}`);
             } finally {
                 setIsLoading(false);
             }
