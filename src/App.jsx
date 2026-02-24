@@ -5,6 +5,7 @@ import TimerWidget from './components/TimerWidget/TimerWidget'
 import QOTD from './components/QOTD/QOTD'
 import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
 import SpotifyLibrary from './components/SpotifyLibrary/SpotifyLibrary'
+import CalendarView from './components/CalendarView/CalendarView'
 import './index.css'
 import './App.css'
 
@@ -47,7 +48,7 @@ function App() {
   const [activeEndTime, setActiveEndTime] = useState(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [wakeLockEnabled, setWakeLockEnabled] = useState(false);
-  const [showLibrary, setShowLibrary] = useState(false);
+  const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' | 'library' | 'calendar'
   const wakeLockRef = useRef(null);
 
   const requestWakeLock = useCallback(async () => {
@@ -148,13 +149,16 @@ function App() {
         <main className="dashboard-grid">
           <section className="left-panel">
             <div className="clock-wrapper">
-              <AnalogClock theme={theme} />
+              <AnalogClock
+                theme={theme}
+                onClick={() => setActiveView(prev => prev === 'calendar' ? 'dashboard' : 'calendar')}
+              />
             </div>
             <DigitalClock theme={theme} endTime={activeEndTime} />
           </section>
 
           <section className="right-panel">
-            <div className={`flip-wrapper ${showLibrary ? 'flipped' : ''}`}>
+            <div className={`flip-wrapper ${activeView !== 'dashboard' ? 'flipped' : ''}`}>
               <div className="flip-front">
                 <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
                   {TIMERS_CONFIG.map(timer => (
@@ -175,7 +179,7 @@ function App() {
                 </div>
 
                 <div className={`player-row ${runningTimerId ? 'player-hidden' : ''}`}>
-                  <SpotifyPlayer isHidden={false} onOpenLibrary={() => setShowLibrary(true)} />
+                  <SpotifyPlayer isHidden={false} onOpenLibrary={() => setActiveView('library')} />
                 </div>
 
                 <div className={`qotd-row ${runningTimerId ? 'qotd-hidden' : ''}`}>
@@ -210,7 +214,12 @@ function App() {
               </div>
 
               <div className="flip-back">
-                <SpotifyLibrary onClose={() => setShowLibrary(false)} />
+                {activeView === 'library' && (
+                  <SpotifyLibrary onClose={() => setActiveView('dashboard')} />
+                )}
+                {activeView === 'calendar' && (
+                  <CalendarView onClose={() => setActiveView('dashboard')} />
+                )}
               </div>
             </div>
           </section>

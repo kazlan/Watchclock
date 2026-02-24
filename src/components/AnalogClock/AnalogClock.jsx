@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './AnalogClock.css';
 
-export default function AnalogClock({ theme }) {
+export default function AnalogClock({ theme, onClick }) {
     const [time, setTime] = useState(new Date());
     const requestRef = useRef();
 
@@ -25,7 +25,11 @@ export default function AnalogClock({ theme }) {
     const hoursDegrees = ((hours % 12 + minutes / 60) / 12) * 360;
 
     return (
-        <div className={`clock-container ${theme}-clock`}>
+        <div
+            className={`clock-container ${theme}-clock`}
+            onClick={onClick}
+            style={{ cursor: onClick ? 'pointer' : 'default' }}
+        >
             <div className="clock-face">
                 {/* Light Reflection (useful for both, more visible in dark) */}
                 <div className="clock-glare"></div>
