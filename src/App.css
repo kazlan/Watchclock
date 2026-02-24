@@ -61,12 +61,17 @@
   transform-style: preserve-3d;
 }
 
-.flip-wrapper.flipped {
+.flip-wrapper.show-library {
+  transform: rotateY(180deg);
+}
+
+.flip-wrapper.show-calendar {
   transform: rotateY(-180deg);
 }
 
 .flip-front,
-.flip-back {
+.flip-back-library,
+.flip-back-calendar {
   top: 0;
   left: 0;
   width: 100%;
@@ -86,7 +91,12 @@
   z-index: 2;
 }
 
-.flip-back {
+.flip-back-library {
+  position: absolute;
+  transform: rotateY(-180deg);
+}
+
+.flip-back-calendar {
   position: absolute;
   transform: rotateY(180deg);
 }
@@ -145,7 +155,7 @@
   align-items: flex-start;
   justify-content: center;
   padding-top: 0;
-  margin-top: -10px;
+  margin-top: -14px;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

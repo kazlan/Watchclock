@@ -11,6 +11,7 @@ const CloseIcon = () => (
 
 const SpotifyLibrary = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState('playlists');
+    const [searchQuery, setSearchQuery] = useState('');
     const [items, setItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState('');
@@ -25,6 +26,14 @@ const SpotifyLibrary = ({ onClose }) => {
         }
 
         const fetchData = async () => {
+            if (activeTab === 'search') {
+                if (!searchQuery) {
+                    setItems([]);
+                }
+                setIsLoading(false);
+                return;
+            }
+
             setIsLoading(true);
             setErrorMsg('');
             try {
@@ -83,6 +92,36 @@ const SpotifyLibrary = ({ onClose }) => {
         }
     };
 
+    const performSearch = async (e) => {
+        if (e) e.preventDefault();
+        if (!searchQuery.trim() || !token) return;
+
+        setIsLoading(true);
+        setErrorMsg('');
+        try {
+            const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=album,playlist,artist&limit=15`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Spotify Error ${response.status}: ${errorText}`);
+            }
+            const data = await response.json();
+
+            const combined = [
+                ...(data.artists?.items || []).map(item => ({ ...item, searchType: 'artist' })),
+                ...(data.albums?.items || []).map(item => ({ ...item, searchType: 'album' })),
+                ...(data.playlists?.items || []).map(item => ({ ...item, searchType: 'playlist' }))
+            ];
+            setItems(combined);
+        } catch (err) {
+            console.error(err);
+            setErrorMsg(`Error en la búsqueda: ${err.message}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="spotify-library-container glass-panel">
             <header className="library-header">
@@ -105,11 +144,32 @@ const SpotifyLibrary = ({ onClose }) => {
                     >
                         Artistas
                     </button>
+                    <button
+                        className={`library-tab ${activeTab === 'search' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('search')}
+                    >
+                        Buscar
+                    </button>
                 </div>
                 <button className="close-library-btn" onClick={onClose} aria-label="Cerrar Librería">
                     <CloseIcon />
                 </button>
             </header>
+
+            {activeTab === 'search' && (
+                <div className="library-search-bar">
+                    <form onSubmit={performSearch}>
+                        <input
+                            type="text"
+                            className="search-input"
+                            placeholder="Buscar playlists, álbumes o artistas..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <button type="submit" className="search-btn">Ir</button>
+                    </form>
+                </div>
+            )}
 
             <main className="library-content">
                 {isLoading && <div className="library-loading">Cargando...</div>}
@@ -139,7 +199,7 @@ const SpotifyLibrary = ({ onClose }) => {
                                 ? actualItem.images[0].url
                                 : 'https://developer.spotify.com/images/guidelines/design/icon3@2x.png'; // fallback
 
-                            const isArtist = activeTab === 'artists';
+                            const isArtist = activeTab === 'artists' || actualItem.searchType === 'artist';
 
                             return (
                                 <div
@@ -157,9 +217,9 @@ const SpotifyLibrary = ({ onClose }) => {
                                         {actualItem.name}
                                     </div>
                                     <div className="card-subtitle">
-                                        {activeTab === 'playlists' && `De ${actualItem.owner?.display_name}`}
-                                        {activeTab === 'albums' && actualItem.artists?.map(a => a.name).join(', ')}
-                                        {activeTab === 'artists' && 'Artista'}
+                                        {(activeTab === 'playlists' || actualItem.searchType === 'playlist') && `De ${actualItem.owner?.display_name || 'Spotify'}`}
+                                        {(activeTab === 'albums' || actualItem.searchType === 'album') && actualItem.artists?.map(a => a.name).join(', ')}
+                                        {isArtist && 'Artista'}
                                     </div>
                                 </div>
                             );

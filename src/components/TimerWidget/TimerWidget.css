@@ -5,7 +5,7 @@
     border-radius: 20px;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 14px;
     cursor: pointer;
     position: relative;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);

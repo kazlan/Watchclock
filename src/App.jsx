@@ -158,7 +158,7 @@ function App() {
           </section>
 
           <section className="right-panel">
-            <div className={`flip-wrapper ${activeView !== 'dashboard' ? 'flipped' : ''}`}>
+            <div className={`flip-wrapper ${activeView === 'library' ? 'show-library' : activeView === 'calendar' ? 'show-calendar' : ''}`}>
               <div className="flip-front">
                 <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
                   {TIMERS_CONFIG.map(timer => (
@@ -213,13 +213,12 @@ function App() {
                 })}
               </div>
 
-              <div className="flip-back">
-                {activeView === 'library' && (
-                  <SpotifyLibrary onClose={() => setActiveView('dashboard')} />
-                )}
-                {activeView === 'calendar' && (
-                  <CalendarView onClose={() => setActiveView('dashboard')} />
-                )}
+              <div className="flip-back-library">
+                <SpotifyLibrary onClose={() => setActiveView('dashboard')} isActive={activeView === 'library'} />
+              </div>
+
+              <div className="flip-back-calendar">
+                <CalendarView onClose={() => setActiveView('dashboard')} isActive={activeView === 'calendar'} />
               </div>
             </div>
           </section>
