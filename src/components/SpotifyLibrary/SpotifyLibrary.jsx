@@ -99,7 +99,7 @@ const SpotifyLibrary = ({ onClose }) => {
         setIsLoading(true);
         setErrorMsg('');
         try {
-            const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=album,playlist,artist&limit=15`, {
+            const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(searchQuery)}&type=album,playlist,artist`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!response.ok) {
