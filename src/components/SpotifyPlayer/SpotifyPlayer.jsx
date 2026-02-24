@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { loginToSpotify, extractAndStoreToken, getStoredToken } from '../../utils/spotifyAuth';
+import { loginToSpotify, handleAuthCallback, getStoredToken } from '../../utils/spotifyAuth';
 import './SpotifyPlayer.css';
 
 const PlayIcon = () => (
@@ -65,27 +65,31 @@ const SpotifyPlayer = ({ isHidden }) => {
     }, []);
 
     useEffect(() => {
-        // 1. Check URL for token first (we just returned from login)
-        const parsed = extractAndStoreToken();
-        let currentToken = parsed.token;
+        const initAuth = async () => {
+            // 1. Check URL for code exchange first (we just returned from login)
+            const parsed = await handleAuthCallback();
+            let currentToken = parsed.token;
 
-        if (parsed.error) {
-            setErrorMsg(parsed.error);
-        }
+            if (parsed.error) {
+                setErrorMsg(parsed.error);
+            }
 
-        // 2. If no new token, check localStorage
-        if (!currentToken) {
-            currentToken = getStoredToken();
-        }
+            // 2. If no new token, check localStorage
+            if (!currentToken) {
+                currentToken = getStoredToken();
+            }
 
-        // Quick handle for '/callback' route refresh edge cases so it doesn't linger
-        if (window.location.pathname === '/callback') {
-            window.history.replaceState({}, document.title, '/');
-        }
+            // Quick handle for '/callback' route refresh edge cases so it doesn't linger
+            if (window.location.pathname === '/callback') {
+                window.history.replaceState({}, document.title, '/');
+            }
 
-        if (currentToken) {
-            setToken(currentToken);
-        }
+            if (currentToken) {
+                setToken(currentToken);
+            }
+        };
+
+        initAuth();
     }, []);
 
     useEffect(() => {

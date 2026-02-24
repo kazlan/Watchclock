@@ -3,69 +3,111 @@ const SCOPES = [
     'user-read-email',
     'user-read-private',
     'user-modify-playback-state',
-    'user-read-playback-state' // required for retrieving current track info
+    'user-read-playback-state'
 ];
 
 export const getSpotifyRedirectUri = () => {
-    // Must exactly match the ones whitelisted in the Spotify Developer Dashboard
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:5173/callback';
     }
     return 'https://watchclock-ebon.vercel.app/callback';
 };
 
-export const loginToSpotify = () => {
+const generateRandomString = (length) => {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const values = crypto.getRandomValues(new Uint8Array(length));
+    return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+};
+
+const sha256 = async (plain) => {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plain);
+    return window.crypto.subtle.digest('SHA-256', data);
+};
+
+const base64encode = (input) => {
+    return btoa(String.fromCharCode(...new Uint8Array(input)))
+        .replace(/=/g, '')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
+};
+
+export const loginToSpotify = async () => {
     const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
     if (!clientId) {
         console.error('Spotify Client ID not found in environment variables.');
         return;
     }
-    const redirectUri = getSpotifyRedirectUri();
-    const authEndpoint = 'https://accounts.spotify.com/authorize';
 
-    const queryUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(SCOPES.join(' '))}&response_type=token&show_dialog=true`;
+    const codeVerifier = generateRandomString(64);
+    const hashed = await sha256(codeVerifier);
+    const codeChallenge = base64encode(hashed);
 
-    window.location.href = queryUrl;
+    window.localStorage.setItem('spotify_code_verifier', codeVerifier);
+
+    const params = new URLSearchParams({
+        client_id: clientId,
+        response_type: 'code',
+        redirect_uri: getSpotifyRedirectUri(),
+        scope: SCOPES.join(' '),
+        code_challenge_method: 'S256',
+        code_challenge: codeChallenge,
+    });
+
+    window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
 };
 
-export const getTokenFromUrl = () => {
-    return window.location.hash
-        .substring(1)
-        .split('&')
-        .reduce((initial, item) => {
-            if (item) {
-                let parts = item.split('=');
-                initial[parts[0]] = decodeURIComponent(parts[1]);
-            }
-            return initial;
-        }, {});
-};
-
-export const extractAndStoreToken = () => {
-    // 1. Check for errors in the query string first
+export const handleAuthCallback = async () => {
     const params = new URLSearchParams(window.location.search);
     const error = params.get('error');
     if (error) {
-        // Clean up URL
         window.history.replaceState({}, document.title, window.location.pathname);
         return { token: null, error: `Spotify denegó el acceso: ${error}` };
     }
 
-    // 2. Check hash for access_token
-    const hashObj = getTokenFromUrl();
-    const accessToken = hashObj.access_token;
+    const code = params.get('code');
+    if (code) {
+        const codeVerifier = localStorage.getItem('spotify_code_verifier');
+        const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
-    if (accessToken) {
-        // Determine expiration time (usually 3600 seconds = 1 hour)
-        const expiresIn = Number(hashObj.expires_in) || 3600;
-        const expirationTime = Date.now() + expiresIn * 1000;
+        try {
+            const response = await fetch('https://accounts.spotify.com/api/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    client_id: clientId,
+                    grant_type: 'authorization_code',
+                    code: code,
+                    redirect_uri: getSpotifyRedirectUri(),
+                    code_verifier: codeVerifier,
+                }),
+            });
 
-        localStorage.setItem('spotify_access_token', accessToken);
-        localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+            if (!response.ok) {
+                const errorData = await response.json();
+                return { token: null, error: `Error obteniendo token: ${errorData.error_description || errorData.error}` };
+            }
 
-        // Clean URL hash so it doesn't stay visible
-        window.history.replaceState({}, document.title, window.location.pathname);
-        return { token: accessToken, error: null };
+            const data = await response.json();
+            const accessToken = data.access_token;
+            const expiresIn = data.expires_in || 3600;
+            const expirationTime = Date.now() + expiresIn * 1000;
+
+            localStorage.setItem('spotify_access_token', accessToken);
+            localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+            if (data.refresh_token) {
+                localStorage.setItem('spotify_refresh_token', data.refresh_token);
+            }
+
+            // Clean URL query
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            return { token: accessToken, error: null };
+        } catch (err) {
+            return { token: null, error: `Error de red: ${err.message}` };
+        }
     }
 
     return { token: null, error: null };
@@ -79,7 +121,6 @@ export const getStoredToken = () => {
         return token;
     }
 
-    // If expired or missing, clean up
     if (token) {
         localStorage.removeItem('spotify_access_token');
         localStorage.removeItem('spotify_token_expiration');
