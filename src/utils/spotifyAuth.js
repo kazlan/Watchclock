@@ -43,7 +43,7 @@ export const loginToSpotify = async () => {
     const hashed = await sha256(codeVerifier);
     const codeChallenge = base64encode(hashed);
 
-    window.localStorage.setItem('spotify_code_verifier', codeVerifier);
+    window.localStorage.setItem('spotify_code_verifier_v2', codeVerifier);
 
     const params = new URLSearchParams({
         client_id: clientId,
@@ -52,6 +52,7 @@ export const loginToSpotify = async () => {
         scope: SCOPES.join(' '),
         code_challenge_method: 'S256',
         code_challenge: codeChallenge,
+        show_dialog: 'true',
     });
 
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
@@ -67,7 +68,7 @@ export const handleAuthCallback = async () => {
 
     const code = params.get('code');
     if (code) {
-        const codeVerifier = localStorage.getItem('spotify_code_verifier');
+        const codeVerifier = localStorage.getItem('spotify_code_verifier_v2');
         const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 
         try {
@@ -95,10 +96,10 @@ export const handleAuthCallback = async () => {
             const expiresIn = data.expires_in || 3600;
             const expirationTime = Date.now() + expiresIn * 1000;
 
-            localStorage.setItem('spotify_access_token', accessToken);
-            localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+            localStorage.setItem('spotify_access_token_v2', accessToken);
+            localStorage.setItem('spotify_token_expiration_v2', expirationTime.toString());
             if (data.refresh_token) {
-                localStorage.setItem('spotify_refresh_token', data.refresh_token);
+                localStorage.setItem('spotify_refresh_token_v2', data.refresh_token);
             }
 
             // Clean URL query
@@ -114,16 +115,16 @@ export const handleAuthCallback = async () => {
 };
 
 export const getStoredToken = () => {
-    const token = localStorage.getItem('spotify_access_token');
-    const expiration = localStorage.getItem('spotify_token_expiration');
+    const token = localStorage.getItem('spotify_access_token_v2');
+    const expiration = localStorage.getItem('spotify_token_expiration_v2');
 
     if (token && expiration && Date.now() < Number(expiration)) {
         return token;
     }
 
     if (token) {
-        localStorage.removeItem('spotify_access_token');
-        localStorage.removeItem('spotify_token_expiration');
+        localStorage.removeItem('spotify_access_token_v2');
+        localStorage.removeItem('spotify_token_expiration_v2');
     }
     return null;
 };
