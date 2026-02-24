@@ -154,10 +154,8 @@ function App() {
           </section>
 
           <section className="right-panel">
-            {showLibrary ? (
-              <SpotifyLibrary onClose={() => setShowLibrary(false)} />
-            ) : (
-              <>
+            <div className={`flip-wrapper ${showLibrary ? 'flipped' : ''}`}>
+              <div className="flip-front">
                 <div className={`timers-row ${runningTimerId ? 'timers-hidden' : ''}`}>
                   {TIMERS_CONFIG.map(timer => (
                     <div key={timer.id} className="timer-wrapper">
@@ -209,8 +207,12 @@ function App() {
                     </div>
                   );
                 })}
-              </>
-            )}
+              </div>
+
+              <div className="flip-back">
+                <SpotifyLibrary onClose={() => setShowLibrary(false)} />
+              </div>
+            </div>
           </section>
         </main>
       </div>
