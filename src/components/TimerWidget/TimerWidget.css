@@ -1,11 +1,11 @@
 .timer-widget {
     width: 100%;
-    height: 120px;
-    min-height: 100px;
+    height: 80px;
+    min-height: 80px;
     border-radius: 20px;
     display: flex;
     align-items: center;
-    padding: 0 30px;
+    padding: 0 20px;
     cursor: pointer;
     position: relative;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -35,8 +35,8 @@
 
 .section-circle {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
