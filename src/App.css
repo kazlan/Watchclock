@@ -67,7 +67,6 @@
 
 .flip-front,
 .flip-back {
-  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -77,6 +76,7 @@
 }
 
 .flip-front {
+  position: relative;
   transform: rotateY(0deg);
   display: flex;
   flex-direction: column;
@@ -87,6 +87,7 @@
 }
 
 .flip-back {
+  position: absolute;
   transform: rotateY(180deg);
 }
 
@@ -97,6 +98,7 @@
   justify-content: center;
   gap: 1.5rem;
   width: 100%;
+  min-height: 0;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 1;
   transform: translateY(0);
@@ -113,6 +115,7 @@
 .player-row {
   flex: 1;
   width: 100%;
+  min-height: 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -137,6 +140,7 @@
 .qotd-row {
   flex: 1;
   width: 100%;
+  min-height: 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
