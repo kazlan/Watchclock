@@ -3,6 +3,7 @@ import AnalogClock from './components/AnalogClock/AnalogClock'
 import DigitalClock from './components/DigitalClock/DigitalClock'
 import TimerWidget from './components/TimerWidget/TimerWidget'
 import QOTD from './components/QOTD/QOTD'
+import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
 import './index.css'
 import './App.css'
 
@@ -196,6 +197,8 @@ function App() {
                 </div>
               );
             })}
+
+            <SpotifyPlayer />
           </section>
         </main>
       </div>

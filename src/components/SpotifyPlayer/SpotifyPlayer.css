@@ -1,0 +1,197 @@
+.spotify-container {
+    width: 100%;
+    border-radius: 24px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--panel-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--text-primary);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spotify-login-view,
+.spotify-connect-view,
+.spotify-error {
+    min-height: 140px;
+    text-align: center;
+}
+
+.spotify-container svg {
+    color: #1DB954;
+    /* Spotify Green */
+}
+
+/* Base button style for Spotify actions */
+.spotify-login-btn {
+    background: #1DB954;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.spotify-login-btn:hover {
+    background: #1ed760;
+    transform: scale(1.05);
+}
+
+.loading-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Active Player View */
+.spotify-player-active {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem;
+    max-height: 120px;
+}
+
+/* Vinyl/Album Art styling */
+.sp-album-art {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+    background: #111;
+}
+
+.sp-album-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sp-spin {
+    animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* The vinyl center hole */
+.sp-center-hole {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    background: var(--bg-color);
+    /* matches app background */
+    border-radius: 50%;
+    border: 4px solid #111;
+    /* inner record label border */
+    z-index: 2;
+}
+
+/* Track Info */
+.sp-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.sp-track-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.2rem;
+}
+
+.sp-artist-name {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Playback Controls */
+.sp-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sp-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s, background-color 0.2s;
+    opacity: 0.7;
+}
+
+.sp-btn:hover {
+    opacity: 1;
+    background: rgba(128, 128, 128, 0.1);
+}
+
+.sp-play-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--text-primary);
+    color: var(--bg-base);
+    opacity: 1;
+}
+
+.sp-play-btn:hover {
+    transform: scale(1.05);
+    background: var(--text-primary);
+}
+
+.sp-btn svg {
+    color: inherit;
+}
+
+/* Responsive adjustments for portrait/small screens */
+@media (max-width: 768px) {
+    .spotify-player-active {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .sp-album-art {
+        width: 60px;
+        height: 60px;
+    }
+
+    .sp-controls {
+        gap: 0.25rem;
+    }
+
+    .sp-play-btn {
+        width: 36px;
+        height: 36px;
+    }
+}
