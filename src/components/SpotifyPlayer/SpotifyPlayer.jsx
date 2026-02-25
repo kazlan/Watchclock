@@ -57,7 +57,7 @@ const SpotifyPlayer = ({ isHidden, onOpenLibrary }) => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${accToken}`
                 },
-                body: JSON.stringify({ device_ids: [devId], play: true })
+                body: JSON.stringify({ device_ids: [devId], play: false })
             });
         } catch (err) {
             console.error('Error transferring playback', err);

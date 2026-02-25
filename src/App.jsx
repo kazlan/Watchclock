@@ -47,7 +47,7 @@ function App() {
   const [runningTimerId, setRunningTimerId] = useState(null);
   const [activeEndTime, setActiveEndTime] = useState(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-  const [wakeLockEnabled, setWakeLockEnabled] = useState(false);
+  const [wakeLockEnabled, setWakeLockEnabled] = useState(true);
   const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' | 'library' | 'calendar'
   const [backViewComponent, setBackViewComponent] = useState('library');
   const wakeLockRef = useRef(null);
