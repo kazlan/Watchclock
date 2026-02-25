@@ -62,6 +62,84 @@ export const loginToSpotify = async () => {
     window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
 };
 
+const DB_NAME = 'SpotifyAuthDB';
+const STORE_NAME = 'tokens';
+
+const initDB = () => {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME);
+            }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+};
+
+const saveTokenToDB = async (authData) => {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        store.put(authData, 'spotify_auth');
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+    });
+};
+
+const getTokenFromDB = async () => {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.get('spotify_auth');
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+    });
+};
+
+export const clearSpotifyAuth = async () => {
+    try {
+        const db = await initDB();
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            store.delete('spotify_auth');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+    } catch (e) { /* Ignore */ }
+};
+
+const refreshAccessToken = async (refreshToken, clientId) => {
+    try {
+        const response = await fetch('https://accounts.spotify.com/api/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                client_id: clientId,
+                grant_type: 'refresh_token',
+                refresh_token: refreshToken
+            }),
+        });
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        return {
+            access_token: data.access_token,
+            expires_in: Date.now() + (data.expires_in || 3600) * 1000,
+            refresh_token: data.refresh_token || refreshToken
+        };
+    } catch (e) {
+        return null;
+    }
+};
+
 export const handleAuthCallback = async () => {
     const params = new URLSearchParams(window.location.search);
     const error = params.get('error');
@@ -96,20 +174,20 @@ export const handleAuthCallback = async () => {
             }
 
             const data = await response.json();
-            const accessToken = data.access_token;
-            const expiresIn = data.expires_in || 3600;
-            const expirationTime = Date.now() + expiresIn * 1000;
+            const expirationTime = Date.now() + (data.expires_in || 3600) * 1000;
 
-            localStorage.setItem('spotify_access_token_v3', accessToken);
-            localStorage.setItem('spotify_token_expiration_v3', expirationTime.toString());
-            if (data.refresh_token) {
-                localStorage.setItem('spotify_refresh_token_v3', data.refresh_token);
-            }
+            const authData = {
+                access_token: data.access_token,
+                expires_in: expirationTime,
+                refresh_token: data.refresh_token || null
+            };
+
+            await saveTokenToDB(authData);
 
             // Clean URL query
             window.history.replaceState({}, document.title, window.location.pathname);
 
-            return { token: accessToken, error: null };
+            return { token: data.access_token, error: null };
         } catch (err) {
             return { token: null, error: `Error de red: ${err.message}` };
         }
@@ -118,17 +196,24 @@ export const handleAuthCallback = async () => {
     return { token: null, error: null };
 };
 
-export const getStoredToken = () => {
-    const token = localStorage.getItem('spotify_access_token_v3');
-    const expiration = localStorage.getItem('spotify_token_expiration_v3');
+export const getValidToken = async () => {
+    const authData = await getTokenFromDB();
+    if (!authData) return null;
 
-    if (token && expiration && Date.now() < Number(expiration)) {
-        return token;
+    if (Date.now() < authData.expires_in - 2 * 60 * 1000) {
+        return authData.access_token;
     }
 
-    if (token) {
-        localStorage.removeItem('spotify_access_token_v3');
-        localStorage.removeItem('spotify_token_expiration_v3');
+    if (authData.refresh_token) {
+        const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+        if (!clientId) return null;
+        const newAuthData = await refreshAccessToken(authData.refresh_token, clientId);
+        if (newAuthData) {
+            await saveTokenToDB(newAuthData);
+            return newAuthData.access_token;
+        }
     }
+
+    await clearSpotifyAuth();
     return null;
 };

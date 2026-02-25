@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getStoredToken } from '../../utils/spotifyAuth';
+import { getValidToken } from '../../utils/spotifyAuth';
 import './SpotifyLibrary.css';
 
 const CloseIcon = () => (
@@ -16,66 +16,71 @@ const SpotifyLibrary = ({ onClose }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState('');
 
-    const token = getStoredToken();
+    // Removed: const token = getStoredToken();
 
-    useEffect(() => {
+    const fetchData = useCallback(async () => {
+        const token = await getValidToken(); // Get token inside the function
         if (!token) {
             setErrorMsg('Sesión de Spotify expirada. Cierra y vuelve a iniciar.');
             setIsLoading(false);
             return;
         }
 
-        const fetchData = async () => {
-            if (activeTab === 'search') {
-                if (!searchQuery) {
-                    setItems([]);
-                }
-                setIsLoading(false);
-                return;
+        if (activeTab === 'search') {
+            if (!searchQuery) {
+                setItems([]);
+            }
+            setIsLoading(false);
+            return;
+        }
+
+        setIsLoading(true);
+        setErrorMsg('');
+        try {
+            let endpoint = '';
+            if (activeTab === 'playlists') {
+                endpoint = 'https://api.spotify.com/v1/me/playlists?limit=50';
+            } else if (activeTab === 'albums') {
+                endpoint = 'https://api.spotify.com/v1/me/albums?limit=50';
+            } else if (activeTab === 'artists') {
+                endpoint = 'https://api.spotify.com/v1/me/following?type=artist&limit=50';
             }
 
-            setIsLoading(true);
-            setErrorMsg('');
-            try {
-                let endpoint = '';
-                if (activeTab === 'playlists') {
-                    endpoint = 'https://api.spotify.com/v1/me/playlists?limit=50';
-                } else if (activeTab === 'albums') {
-                    endpoint = 'https://api.spotify.com/v1/me/albums?limit=50';
-                } else if (activeTab === 'artists') {
-                    endpoint = 'https://api.spotify.com/v1/me/following?type=artist&limit=50';
-                }
+            const response = await fetch(endpoint, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-                const response = await fetch(endpoint, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Spotify Error ${response.status}: ${errorText}`);
-                }
-
-                const data = await response.json();
-
-                if (activeTab === 'artists') {
-                    setItems(data.artists.items || []);
-                } else {
-                    setItems(data.items || []);
-                }
-
-            } catch (err) {
-                console.error(err);
-                setErrorMsg(`No se pudo cargar la librería: ${err.message}`);
-            } finally {
-                setIsLoading(false);
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Spotify Error ${response.status}: ${errorText}`);
             }
-        };
 
+            const data = await response.json();
+
+            if (activeTab === 'artists') {
+                setItems(data.artists.items || []);
+            } else {
+                setItems(data.items || []);
+            }
+
+        } catch (err) {
+            console.error(err);
+            setErrorMsg(`No se pudo cargar la librería: ${err.message}`);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [activeTab, searchQuery]); // Added searchQuery to dependencies for search tab logic
+
+    useEffect(() => {
         fetchData();
-    }, [activeTab, token]);
+    }, [fetchData]); // Depend on fetchData
 
     const handlePlayContext = async (uri) => {
-        if (!token) return;
+        const token = await getValidToken(); // Get token inside the function
+        if (!token) {
+            setErrorMsg('Sesión de Spotify expirada. Cierra y vuelve a iniciar.');
+            return;
+        }
         try {
             await fetch('https://api.spotify.com/v1/me/player/play', {
                 method: 'PUT',
@@ -94,7 +99,13 @@ const SpotifyLibrary = ({ onClose }) => {
 
     const performSearch = async (e) => {
         if (e) e.preventDefault();
-        if (!searchQuery.trim() || !token) return;
+        if (!searchQuery.trim()) return; // Removed token check here, will get it below
+
+        const token = await getValidToken(); // Get token inside the function
+        if (!token) {
+            setErrorMsg('Sesión de Spotify expirada. Cierra y vuelve a iniciar.');
+            return;
+        }
 
         setIsLoading(true);
         setErrorMsg('');

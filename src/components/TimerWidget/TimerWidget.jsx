@@ -155,8 +155,7 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
 
             {/* Middle Text Section (Left aligned in dark, middle in light) */}
             <div className="section-text">
-                <div className="text-val">{durationMinutes} Min</div>
-                <div className="text-lbl">{title}</div>
+                <div className="text-val">{title}</div>
             </div>
 
             {/* Dark mode: Circle with icon inside on the RIGHT */}

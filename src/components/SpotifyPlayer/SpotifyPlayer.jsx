@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { loginToSpotify, handleAuthCallback, getStoredToken } from '../../utils/spotifyAuth';
+import { loginToSpotify, handleAuthCallback, getValidToken, clearSpotifyAuth } from '../../utils/spotifyAuth';
 import './SpotifyPlayer.css';
 
 const PlayIcon = () => (
@@ -74,9 +74,9 @@ const SpotifyPlayer = ({ isHidden, onOpenLibrary }) => {
                 setErrorMsg(parsed.error);
             }
 
-            // 2. If no new token, check localStorage
+            // 2. If no new token, check IndexedDB
             if (!currentToken) {
-                currentToken = getStoredToken();
+                currentToken = await getValidToken();
             }
 
             // Quick handle for '/callback' route refresh edge cases so it doesn't linger
@@ -128,7 +128,7 @@ const SpotifyPlayer = ({ isHidden, onOpenLibrary }) => {
             spotifyPlayer.addListener('initialization_error', ({ message }) => { setErrorMsg(message) });
             spotifyPlayer.addListener('authentication_error', ({ message }) => {
                 setErrorMsg('Auth error. Please log in again.');
-                localStorage.removeItem('spotify_access_token');
+                clearSpotifyAuth();
                 setToken(null);
             });
             spotifyPlayer.addListener('account_error', ({ message }) => { setErrorMsg(message) });
