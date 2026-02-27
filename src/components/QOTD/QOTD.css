@@ -57,3 +57,12 @@
 .dark-qotd .qotd-author {
     color: var(--widget-color);
 }
+
+/* Steam Theme */
+.steam-qotd .qotd-text {
+    color: rgba(252, 211, 77, 0.8);
+}
+
+.steam-qotd .qotd-author {
+    color: var(--widget-color);
+}

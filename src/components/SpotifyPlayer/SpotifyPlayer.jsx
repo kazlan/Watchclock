@@ -105,7 +105,11 @@ const SpotifyPlayer = ({ isHidden, onOpenLibrary }) => {
         window.onSpotifyWebPlaybackSDKReady = () => {
             const spotifyPlayer = new window.Spotify.Player({
                 name: 'Watchclock Player',
-                getOAuthToken: cb => { cb(token); },
+                getOAuthToken: async cb => {
+                    const validToken = await getValidToken();
+                    // Provide the new token, fallback to current token so SDK can fail clearly
+                    cb(validToken || token);
+                },
                 volume: 0.5
             });
 

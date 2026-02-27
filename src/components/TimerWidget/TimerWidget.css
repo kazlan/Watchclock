@@ -229,6 +229,46 @@
     filter: drop-shadow(0 0 3px var(--widget-color));
 }
 
+/* ================== STEAM MODE WIDGET (Steampunk) ================== */
+
+.steam-widget {
+    background: var(--timer-bg);
+    border: var(--timer-border);
+    box-shadow:
+        inset 0 0 20px rgba(217, 119, 6, 0.05),
+        0 0px 20px rgba(0, 0, 0, 0.6),
+        0 0px 10px rgba(217, 119, 6, 0.2);
+    justify-content: space-between;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.steam-widget .section-text {
+    padding-left: 10px;
+}
+
+.steam-widget .text-val {
+    color: var(--widget-color);
+    text-shadow: 0 0 8px var(--widget-color);
+    font-weight: 600;
+}
+
+.steam-widget .text-lbl {
+    color: var(--text-secondary);
+}
+
+.steam-widget .ring-bg {
+    stroke: rgba(217, 119, 6, 0.1);
+}
+
+.steam-widget .glow-ring {
+    filter: drop-shadow(0 0 6px var(--widget-color));
+}
+
+.steam-widget .circle-inner-icon svg {
+    filter: drop-shadow(0 0 4px var(--widget-color));
+}
+
 /* --- Responsive Adjustments for Extreme Landscape (e.g. Galaxy S20) --- */
 @media (max-height: 450px) {
     .timer-widget {

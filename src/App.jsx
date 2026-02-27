@@ -7,7 +7,69 @@ import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
 import SpotifyLibrary from './components/SpotifyLibrary/SpotifyLibrary'
 import CalendarView from './components/CalendarView/CalendarView'
 import './index.css'
+import './index.css'
 import './App.css'
+
+// --- Weather Icons ---
+const WeatherSunIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+    <circle cx="12" cy="12" r="4"></circle>
+    <line x1="12" y1="2" x2="12" y2="4"></line>
+    <line x1="12" y1="20" x2="12" y2="22"></line>
+    <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+    <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+    <line x1="2" y1="12" x2="4" y2="12"></line>
+    <line x1="20" y1="12" x2="22" y2="12"></line>
+    <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+    <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+  </svg>
+);
+
+const WeatherCloudIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+  </svg>
+);
+
+const WeatherCloudRainIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+    <path d="M16 14v6"></path>
+    <path d="M8 14v6"></path>
+    <path d="M12 16v6"></path>
+  </svg>
+);
+
+const WeatherCloudSnowIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+    <path d="M8 15h.01"></path>
+    <path d="M8 19h.01"></path>
+    <path d="M12 17h.01"></path>
+    <path d="M12 21h.01"></path>
+    <path d="M16 15h.01"></path>
+    <path d="M16 19h.01"></path>
+  </svg>
+);
+
+const WeatherCloudLightningIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+    <path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"></path>
+    <polyline points="13 11 9 17 15 17 11 23"></polyline>
+  </svg>
+);
+
+const getWeatherIcon = (code) => {
+  // Basic WMO Weather interpretation codes
+  if (code === 0 || code === 1) return <WeatherSunIcon />;
+  if (code === 2 || code === 3 || code === 45 || code === 48) return <WeatherCloudIcon />;
+  if (code >= 51 && code <= 67) return <WeatherCloudRainIcon />;
+  if (code >= 71 && code <= 77) return <WeatherCloudSnowIcon />;
+  if (code >= 80 && code <= 82) return <WeatherCloudRainIcon />;
+  if (code >= 85 && code <= 86) return <WeatherCloudSnowIcon />;
+  if (code >= 95) return <WeatherCloudLightningIcon />;
+  return <WeatherCloudIcon />; // Fallback
+};
 
 const MoonIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
@@ -26,6 +88,13 @@ const SunIcon = () => (
     <line x1="21" y1="12" x2="23" y2="12"></line>
     <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+);
+
+const CogIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path>
   </svg>
 );
 
@@ -50,6 +119,7 @@ function App() {
   const [wakeLockEnabled, setWakeLockEnabled] = useState(true);
   const [activeView, setActiveView] = useState('dashboard'); // 'dashboard' | 'library' | 'calendar'
   const [backViewComponent, setBackViewComponent] = useState('library');
+  const [weather, setWeather] = useState(null);
   const wakeLockRef = useRef(null);
 
   const handleViewChange = (newView) => {
@@ -137,8 +207,50 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  // Fetch Weather effect
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchWeather = async () => {
+      try {
+        // 1. Get location via IP (no permission prompts needed for the dashboard)
+        const geoRes = await fetch('https://get.geojs.io/v1/ip/geo.json');
+        if (!geoRes.ok) throw new Error('Failed to get location');
+        const geoData = await geoRes.json();
+        const { latitude, longitude } = geoData;
+
+        // 2. Fetch current weather from Open-Meteo API
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code`);
+        if (!weatherRes.ok) throw new Error('Failed to get weather');
+        const weatherData = await weatherRes.json();
+
+        if (isMounted && weatherData.current) {
+          setWeather({
+            temp: Math.round(weatherData.current.temperature_2m),
+            code: weatherData.current.weather_code
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching weather:", err);
+      }
+    };
+
+    fetchWeather();
+    // optionally refresh weather every hour
+    const intervalId = setInterval(fetchWeather, 3600000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
+  }, []);
+
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setTheme(prev => {
+      if (prev === 'dark') return 'light';
+      if (prev === 'light') return 'steam';
+      return 'dark';
+    });
   };
 
   return (
@@ -159,8 +271,16 @@ function App() {
             <BulbIcon active={wakeLockEnabled} />
           </button>
           <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle Theme">
-            {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+            {theme === 'dark' && <SunIcon />}
+            {theme === 'light' && <CogIcon />}
+            {theme === 'steam' && <MoonIcon />}
           </button>
+          {weather && (
+            <div className={`weather-widget ${theme}-weather`}>
+              <div className="weather-icon">{getWeatherIcon(weather.code)}</div>
+              <span className="weather-temp">{weather.temp}°C</span>
+            </div>
+          )}
         </div>
 
         <main className="dashboard-grid">

@@ -127,7 +127,14 @@ const refreshAccessToken = async (refreshToken, clientId) => {
                 refresh_token: refreshToken
             }),
         });
-        if (!response.ok) return null;
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const err = new Error(errorData.error_description || 'Refresh failed');
+            err.status = response.status;
+            err.code = errorData.error;
+            throw err;
+        }
 
         const data = await response.json();
         return {
@@ -136,7 +143,7 @@ const refreshAccessToken = async (refreshToken, clientId) => {
             refresh_token: data.refresh_token || refreshToken
         };
     } catch (e) {
-        return null;
+        throw e;
     }
 };
 
@@ -196,21 +203,43 @@ export const handleAuthCallback = async () => {
     return { token: null, error: null };
 };
 
+let refreshTokenPromise = null;
+
 export const getValidToken = async () => {
     const authData = await getTokenFromDB();
     if (!authData) return null;
 
+    // Buffer of 2 minutes
     if (Date.now() < authData.expires_in - 2 * 60 * 1000) {
         return authData.access_token;
     }
 
     if (authData.refresh_token) {
-        const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-        if (!clientId) return null;
-        const newAuthData = await refreshAccessToken(authData.refresh_token, clientId);
-        if (newAuthData) {
-            await saveTokenToDB(newAuthData);
-            return newAuthData.access_token;
+        if (!refreshTokenPromise) {
+            refreshTokenPromise = (async () => {
+                try {
+                    const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+                    if (!clientId) throw new Error("No client ID");
+
+                    const newAuthData = await refreshAccessToken(authData.refresh_token, clientId);
+                    await saveTokenToDB(newAuthData);
+                    return newAuthData.access_token;
+                } catch (e) {
+                    // Only clear auth securely if Spotify asserts the grant is invalid (e.g. revoked)
+                    if (e.status === 400 && e.code === 'invalid_grant') {
+                        await clearSpotifyAuth();
+                    }
+                    throw e;
+                } finally {
+                    refreshTokenPromise = null;
+                }
+            })();
+        }
+
+        try {
+            return await refreshTokenPromise;
+        } catch (e) {
+            return null;
         }
     }
 

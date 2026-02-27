@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './DigitalClock.css';
 
+
 export default function DigitalClock({ theme, endTime }) {
     const [time, setTime] = useState(new Date());
     const [countdownMs, setCountdownMs] = useState(null);
@@ -47,6 +48,7 @@ export default function DigitalClock({ theme, endTime }) {
         return () => clearInterval(intervalId);
     }, [endTime]);
 
+
     if (endTime && countdownMs !== null) {
         // Display countdown
         const totalSeconds = Math.ceil(countdownMs / 1000);
@@ -54,7 +56,7 @@ export default function DigitalClock({ theme, endTime }) {
         const s = (totalSeconds % 60).toString().padStart(2, '0');
 
         return (
-            <div className={`digital-clock-container ${theme}-digital`}>
+            <div className={`digital-clock-container ${theme}-digital countdown-mode`}>
                 <span className="digit">{m}</span>
                 <span className="colon">:</span>
                 <span className="digit">{s}</span>
@@ -68,9 +70,11 @@ export default function DigitalClock({ theme, endTime }) {
 
     return (
         <div className={`digital-clock-container ${theme}-digital`}>
-            <span className="digit">{hours}</span>
-            <span className="colon">:</span>
-            <span className="digit">{minutes}</span>
+            <div className="time-display">
+                <span className="digit">{hours}</span>
+                <span className="colon">:</span>
+                <span className="digit">{minutes}</span>
+            </div>
         </div>
     );
 }

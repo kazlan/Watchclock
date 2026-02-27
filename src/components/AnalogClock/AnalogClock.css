@@ -198,6 +198,62 @@
     box-shadow: 0 0 15px var(--accent-clock-s);
 }
 
+/* ==================== STEAM CLOCK ==================== */
+
+.steam-clock .clock-face {
+    background: rgba(30, 15, 5, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 2px solid rgba(217, 119, 6, 0.3);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.6),
+        inset 0 0 0 1px rgba(217, 119, 6, 0.1);
+}
+
+.steam-clock .main-mark {
+    width: 6px;
+    height: 20px;
+    background: var(--accent-clock-h);
+    box-shadow: 0 0 8px var(--accent-clock-h);
+}
+
+.steam-clock .sub-mark {
+    width: 4px;
+    height: 12px;
+    background: var(--accent-clock-m);
+    box-shadow: 0 0 8px var(--accent-clock-m);
+    opacity: 0.8;
+}
+
+.steam-clock .hour-hand {
+    width: 8px;
+    height: 28%;
+    background-color: var(--accent-clock-h);
+    margin-left: -4px;
+    box-shadow: 0 0 12px var(--accent-clock-h);
+}
+
+.steam-clock .min-hand {
+    width: 6px;
+    height: 38%;
+    background-color: var(--accent-clock-m);
+    margin-left: -3px;
+    box-shadow: 0 0 10px var(--accent-clock-m);
+}
+
+.steam-clock .sec-hand {
+    width: 3px;
+    height: 42%;
+    background-color: var(--accent-clock-s);
+    margin-left: -1.5px;
+    box-shadow: 0 0 10px var(--accent-clock-s);
+}
+
+.steam-clock .clock-center {
+    background: var(--accent-clock-s);
+    box-shadow: 0 0 15px var(--accent-clock-s);
+}
+
 /* --- Extreme Landscape Scale Down --- */
 @media (max-height: 450px) {
     .clock-container {

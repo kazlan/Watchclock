@@ -195,6 +195,40 @@
   transform: scale(1.05);
 }
 
+/* Header Weather Widget */
+.weather-widget {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  opacity: 0.6;
+  margin-left: 8px;
+  transition: opacity 0.3s ease;
+}
+
+.weather-widget:hover {
+  opacity: 1;
+}
+
+.weather-icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Theme specifics for weather */
+[data-theme='light'] .weather-widget {
+  color: var(--text-secondary);
+}
+
+[data-theme='dark'] .weather-widget {
+  color: var(--text-secondary);
+}
+
+[data-theme='steam'] .weather-widget {
+  color: var(--text-secondary);
+}
+
 /* Wake lock bulb button */
 .wake-lock-btn {
   color: var(--text-secondary);

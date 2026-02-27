@@ -159,7 +159,7 @@ export default function TimerWidget({ id, title, durationMinutes, colorVar, them
             </div>
 
             {/* Dark mode: Circle with icon inside on the RIGHT */}
-            {theme === 'dark' && (
+            {(theme === 'dark' || theme === 'steam') && (
                 <div className="section-circle">
                     <svg className="progress-ring" viewBox="0 0 100 100">
                         <circle className="ring-bg" cx="50" cy="50" r={radius} />
