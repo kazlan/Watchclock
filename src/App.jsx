@@ -6,6 +6,7 @@ import QOTD from './components/QOTD/QOTD'
 import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
 import SpotifyLibrary from './components/SpotifyLibrary/SpotifyLibrary'
 import CalendarView from './components/CalendarView/CalendarView'
+import CelestialView from './components/CelestialView/CelestialView'
 import './index.css'
 import './index.css'
 import './App.css'
@@ -104,6 +105,16 @@ const BulbIcon = ({ active }) => (
   </svg>
 );
 
+const TelescopeIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+    <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 18A9 9 0 0 1 3 12"></path>
+    <path d="m19 14-4.88-4.88"></path>
+    <path d="M14.12 9.12a2.82 2.82 0 1 0-3.99-4 2.82 2.82 0 0 0 3.99 4z"></path>
+    <path d="m8 15 2.5-2.5"></path>
+    <path d="m11 18 2.5-2.5"></path>
+  </svg>
+);
+
 const TIMERS_CONFIG = [
   { id: 'focus', title: 'Focus', duration: 10, colorVar: '--timer-focus', icon: 'play', video: '/work.mp4' },
   { id: 'coffee', title: 'Coffee', duration: 5, colorVar: '--timer-coffee', icon: 'coffee', video: '/coffee.mp4' },
@@ -137,6 +148,7 @@ function App() {
       setActiveView(newView);
     }
   };
+
 
   const requestWakeLock = useCallback(async () => {
     try {
@@ -219,16 +231,20 @@ function App() {
         const geoData = await geoRes.json();
         const { latitude, longitude } = geoData;
 
+        // Save location for Celestial mapping
+        setWeather(prev => ({ ...prev, location: { latitude: parseFloat(latitude), longitude: parseFloat(longitude) } }));
+
         // 2. Fetch current weather from Open-Meteo API
         const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code`);
         if (!weatherRes.ok) throw new Error('Failed to get weather');
         const weatherData = await weatherRes.json();
 
         if (isMounted && weatherData.current) {
-          setWeather({
+          setWeather(prev => ({
+            ...prev,
             temp: Math.round(weatherData.current.temperature_2m),
             code: weatherData.current.weather_code
-          });
+          }));
         }
       } catch (err) {
         console.error("Error fetching weather:", err);
@@ -274,6 +290,9 @@ function App() {
             {theme === 'dark' && <SunIcon />}
             {theme === 'light' && <CogIcon />}
             {theme === 'steam' && <MoonIcon />}
+          </button>
+          <button onClick={() => handleViewChange('celestial')} className="theme-toggle-btn" aria-label="View Celestial Hemisphere">
+            <TelescopeIcon />
           </button>
           {weather && (
             <div className={`weather-widget ${theme}-weather`}>
@@ -356,6 +375,9 @@ function App() {
                 )}
                 {backViewComponent === 'calendar' && (
                   <CalendarView onClose={() => handleViewChange('dashboard')} isActive={activeView === 'calendar'} />
+                )}
+                {backViewComponent === 'celestial' && (
+                  <CelestialView onClose={() => handleViewChange('dashboard')} isActive={activeView === 'celestial'} location={weather?.location} />
                 )}
               </div>
             </div>
