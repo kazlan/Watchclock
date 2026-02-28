@@ -6,10 +6,68 @@ const SIZE = 9;
 const TOTAL = SIZE * SIZE;
 const STAR_POINTS = new Set([20, 24, 56, 60, 40]); // (2,2),(2,6),(6,2),(6,6),(4,4)
 const AI_DELAY = 600;
+const KOMI = 6.5; // Japanese rules compensation for White
 const GAME_KEY = 'go_game_state';
 const SKILL_KEY = 'go_ai_skill';
 const PLAYER_SKILL_KEY = 'go_player_skill';
 const COLOR_KEY = 'go_human_color';
+const HISTORY_KEY = 'go_match_history';
+
+// ─── Sound Effects (Web Audio API) ────────────────────────────────────────────
+let _audioCtx = null;
+function getAudioCtx() {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return _audioCtx;
+}
+
+function playStoneSound() {
+    try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800 + Math.random() * 200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.12);
+    } catch (_) { }
+}
+
+function playCaptureSound() {
+    try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+    } catch (_) { }
+}
+
+function playGameOverSound() {
+    try {
+        const ctx = getAudioCtx();
+        [0, 0.12, 0.24].forEach((delay, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime([523, 659, 784][i], ctx.currentTime + delay);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.3);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start(ctx.currentTime + delay);
+            osc.stop(ctx.currentTime + delay + 0.3);
+        });
+    } catch (_) { }
+}
 
 // ─── Pure Go Logic ────────────────────────────────────────────────────────────
 
@@ -93,7 +151,7 @@ function countCaptures(board, pos, color) {
     return captured;
 }
 
-/** Area scoring: returns { black, white } territory + stones */
+/** Japanese scoring: territory + prisoners (captures). Komi added to White. */
 function computeScore(board, captures) {
     const territory = { black: 0, white: 0 };
     const visited = new Set();
@@ -122,12 +180,9 @@ function computeScore(board, captures) {
         }
     }
 
-    const blackStones = board.filter(c => c === 'black').length;
-    const whiteStones = board.filter(c => c === 'white').length;
-
     return {
-        black: blackStones + territory.black + (captures.black || 0),
-        white: whiteStones + territory.white + (captures.white || 0),
+        black: territory.black + (captures.black || 0),
+        white: territory.white + (captures.white || 0) + KOMI,
     };
 }
 
@@ -163,6 +218,29 @@ function pickAIMove(board, prevBoard, skillLevel, color = 'white') {
     const opponent = color === 'white' ? 'black' : 'white';
     const legalMoves = getAllLegalMoves(board, color, prevBoard);
     if (legalMoves.length === 0) return null; // pass
+
+    const stonesOnBoard = board.filter(s => s !== null).length;
+
+    // ── Opening Book (skill > 20, first ~6 stones) ──
+    // Key points on a 9x9 board (row, col) -> idx
+    //   Tengen (4,4)=40     3-3 corners: (2,2)=20, (2,6)=24, (6,2)=56, (6,6)=60
+    //   4-4 corners: (3,3)=30, (3,5)=32, (5,3)=48, (5,5)=50
+    //   Side: (2,4)=22, (4,2)=38, (4,6)=42, (6,4)=58
+    if (skillLevel > 20 && stonesOnBoard < 6) {
+        // Priority openings: Tengen first, then corners, then sides
+        const openingPriority = skillLevel > 50
+            ? [40, 30, 50, 32, 48, 20, 24, 56, 60, 22, 38, 42, 58]
+            : [40, 20, 24, 56, 60, 30, 50, 32, 48];
+
+        // Pick the first available opening position
+        for (const pos of openingPriority) {
+            if (board[pos] === null && applyMove(board, pos, color, prevBoard)) {
+                // Add slight randomness: 80% chance to use book, 20% skip
+                if (Math.random() < 0.8) return pos;
+                break;
+            }
+        }
+    }
 
     // ── Beginner (0–20): random ──
     if (skillLevel <= 20) {
@@ -315,6 +393,21 @@ function saveHumanColor(v) {
     try { localStorage.setItem(COLOR_KEY, v); } catch (_) { }
 }
 
+function loadMatchHistory() {
+    try {
+        const raw = localStorage.getItem(HISTORY_KEY);
+        if (raw) return JSON.parse(raw);
+    } catch (_) { }
+    return [];
+}
+
+function saveMatchHistory(h) {
+    try {
+        // Keep last 50 matches max
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(-50)));
+    } catch (_) { }
+}
+
 function getGoRank(skill) {
     // Mapping 0-100 to traditional ranks:
     // 0-60 -> 30k to 1k (1 rank per 2 points)
@@ -340,6 +433,7 @@ export default function GoBoard({ onClose, isActive }) {
     const [playerSkill, setPlayerSkill] = useState(loadPlayerSkill);
     const [humanColor, setHumanColor] = useState(loadHumanColor);
     const [showNewGameModal, setShowNewGameModal] = useState(false);
+    const [matchHistory, setMatchHistory] = useState(loadMatchHistory);
     const [hoverPos, setHoverPos] = useState(null);
     const [aiThinking, setAiThinking] = useState(false);
     const aiTimerRef = useRef(null);
@@ -383,6 +477,8 @@ export default function GoBoard({ onClose, isActive }) {
                 if (!newBoard) return prev;
 
                 const capturedCount = countCaptures(prev.board, aiMove, aiColor);
+                if (capturedCount > 0) playCaptureSound();
+                else playStoneSound();
                 return {
                     ...prev,
                     board: newBoard,
@@ -410,6 +506,8 @@ export default function GoBoard({ onClose, isActive }) {
         if (!newBoard) return;
 
         const capturedCount = countCaptures(board, pos, humanColor);
+        if (capturedCount > 0) playCaptureSound();
+        else playStoneSound();
         const newPasses = 0;
 
         setState(prev => ({
@@ -461,6 +559,7 @@ export default function GoBoard({ onClose, isActive }) {
     // Adjust skill after game ends
     useEffect(() => {
         if (gameOver && scores) {
+            playGameOverSound();
             let playerWon = false;
 
             if (state.resignedBy) {
@@ -486,8 +585,68 @@ export default function GoBoard({ onClose, isActive }) {
                 savePlayerSkill(newPSkill);
                 setPlayerSkill(newPSkill);
             }
+
+            // Record match result
+            const result = state.resignedBy
+                ? (state.resignedBy === humanColor ? 'loss' : 'win')
+                : (playerWon ? 'win' : (scores[humanColor] === scores[aiColor] ? 'draw' : 'loss'));
+            const entry = {
+                date: new Date().toISOString().split('T')[0],
+                color: humanColor,
+                result,
+                playerRank: getGoRank(playerSkill),
+                aiRank: getGoRank(skillLevel),
+                moves: (state.moveHistory || []).length,
+            };
+            const updated = [...matchHistory, entry];
+            setMatchHistory(updated);
+            saveMatchHistory(updated);
         }
     }, [gameOver]);
+
+    // Replay a moveHistory to reconstruct a full game state
+    function replayMoves(history) {
+        let s = freshState();
+        for (const move of history) {
+            if (move.pass) {
+                s.consecutivePasses += 1;
+                s.currentPlayer = s.currentPlayer === 'black' ? 'white' : 'black';
+                s.moveCount += 1;
+            } else if (move.resign) {
+                // shouldn't be replayed, but guard
+                break;
+            } else {
+                const newBoard = applyMove(s.board, move.pos, move.color, s.previousBoard);
+                if (newBoard) {
+                    const captured = countCaptures(s.board, move.pos, move.color);
+                    s.previousBoard = [...s.board];
+                    s.board = newBoard;
+                    s.captures[move.color] += captured;
+                    s.consecutivePasses = 0;
+                    s.currentPlayer = s.currentPlayer === 'black' ? 'white' : 'black';
+                    s.moveCount += 1;
+                }
+            }
+        }
+        s.moveHistory = history;
+        return s;
+    }
+
+    const handleUndo = useCallback(() => {
+        if (gameOver || aiThinking) return;
+        const history = state.moveHistory;
+        if (history.length === 0) return;
+
+        // Undo back to the human's previous turn: remove last 2 moves (AI + human)
+        // If it's currently the human's turn, undo the last AI move + the human move before it
+        let stepsBack = currentPlayer === humanColor ? 2 : 1;
+        stepsBack = Math.min(stepsBack, history.length);
+
+        const newHistory = history.slice(0, -stepsBack);
+        const rebuilt = replayMoves(newHistory);
+        setState(rebuilt);
+        saveState(rebuilt);
+    }, [gameOver, aiThinking, state.moveHistory, currentPlayer, humanColor]);
 
     const handleNewGameClick = useCallback(() => {
         setShowNewGameModal(true);
@@ -508,7 +667,7 @@ export default function GoBoard({ onClose, isActive }) {
         const letters = "abcdefghijklmnopqrstuvwxyz";
         const dateStr = new Date().toISOString().split('T')[0];
 
-        let sgf = `(;FF[4]GM[1]SZ[${SIZE}]`;
+        let sgf = `(;FF[4]GM[1]SZ[${SIZE}]KM[${KOMI}]RU[Japanese]`;
         if (humanColor === 'black') {
             sgf += `PW[Watchclock AI]PB[Human]WR[${getGoRank(skillLevel)}]BR[${getGoRank(playerSkill)}]DT[${dateStr}]`;
         } else {
@@ -733,6 +892,18 @@ export default function GoBoard({ onClose, isActive }) {
                         </div>
                     </div>
 
+                    {/* Stats */}
+                    {matchHistory.length > 0 && (() => {
+                        const wins = matchHistory.filter(m => m.result === 'win').length;
+                        const losses = matchHistory.filter(m => m.result === 'loss').length;
+                        const draws = matchHistory.filter(m => m.result === 'draw').length;
+                        return (
+                            <div className="goboard-stats">
+                                <span className="score-label">Record: {wins}W / {losses}L / {draws}D</span>
+                            </div>
+                        );
+                    })()}
+
                     {/* Action row at bottom */}
                     <div className="goboard-actions">
                         {gameOver ? (
@@ -746,6 +917,13 @@ export default function GoBoard({ onClose, isActive }) {
                                     disabled={currentPlayer !== humanColor || aiThinking}
                                 >
                                     Pass Turn
+                                </button>
+                                <button
+                                    className="goboard-btn goboard-pass"
+                                    onClick={handleUndo}
+                                    disabled={!state.moveHistory || state.moveHistory.length === 0 || aiThinking}
+                                >
+                                    ↩ Undo
                                 </button>
                                 <button
                                     className="goboard-btn goboard-resign"

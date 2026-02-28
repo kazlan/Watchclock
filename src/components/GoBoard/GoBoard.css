@@ -279,6 +279,12 @@
     background: rgba(128, 128, 128, 0.2);
 }
 
+.goboard-stats {
+    text-align: center;
+    padding: 4px 0;
+    opacity: 0.7;
+}
+
 /* ── Actions / Buttons ── */
 .goboard-actions {
     flex-shrink: 0;
