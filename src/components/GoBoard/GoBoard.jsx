@@ -8,6 +8,8 @@ const STAR_POINTS = new Set([20, 24, 56, 60, 40]); // (2,2),(2,6),(6,2),(6,6),(4
 const AI_DELAY = 600;
 const GAME_KEY = 'go_game_state';
 const SKILL_KEY = 'go_ai_skill';
+const PLAYER_SKILL_KEY = 'go_player_skill';
+const COLOR_KEY = 'go_human_color';
 
 // ─── Pure Go Logic ────────────────────────────────────────────────────────────
 
@@ -157,9 +159,8 @@ function getTotalLiberties(board, color) {
     return total;
 }
 
-function pickAIMove(board, prevBoard, skillLevel) {
-    const color = 'white';
-    const opponent = 'black';
+function pickAIMove(board, prevBoard, skillLevel, color = 'white') {
+    const opponent = color === 'white' ? 'black' : 'white';
     const legalMoves = getAllLegalMoves(board, color, prevBoard);
     if (legalMoves.length === 0) return null; // pass
 
@@ -226,10 +227,21 @@ function pickAIMove(board, prevBoard, skillLevel) {
         if (s > best) { best = s; bestMove = pos; }
     }
 
-    // Expert: pass if significantly behind
+    // Expert: pass or resign if significantly behind
     if (skillLevel > 80) {
-        const scores = computeScore(board, { black: 0, white: 0 });
-        if (scores.white < scores.black - 15 && Math.random() < 0.3) return null;
+        // AI considers resigning only if game is somewhat advanced (e.g., > 30 moves total approximation)
+        const stonesOnBoard = board.filter(s => s !== null).length;
+        if (stonesOnBoard > 30) {
+            const scores = computeScore(board, { black: 0, white: 0 });
+            const myScore = scores[color];
+            const oppScore = scores[opponent];
+
+            if (myScore < oppScore - 25 && Math.random() < 0.6) {
+                return 'resign';
+            } else if (myScore < oppScore - 15 && Math.random() < 0.3) {
+                return null; // pass
+            }
+        }
     }
 
     return bestMove;
@@ -246,14 +258,19 @@ function freshState() {
         previousBoard: null,
         gameOver: false,
         scores: null,
+        resignedBy: null,
         moveCount: 0,
+        moveHistory: [],
     };
 }
 
 function loadState() {
     try {
         const raw = localStorage.getItem(GAME_KEY);
-        if (raw) return JSON.parse(raw);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            return { ...freshState(), ...parsed };
+        }
     } catch (_) { }
     return freshState();
 }
@@ -274,54 +291,107 @@ function saveSkill(v) {
     try { localStorage.setItem(SKILL_KEY, String(v)); } catch (_) { }
 }
 
+function loadPlayerSkill() {
+    try {
+        const v = localStorage.getItem(PLAYER_SKILL_KEY);
+        if (v !== null) return Math.max(0, Math.min(100, parseInt(v, 10)));
+    } catch (_) { }
+    return 30; // Default player skill is slightly higher than 0
+}
+
+function savePlayerSkill(v) {
+    try { localStorage.setItem(PLAYER_SKILL_KEY, String(v)); } catch (_) { }
+}
+
+function loadHumanColor() {
+    try {
+        const v = localStorage.getItem(COLOR_KEY);
+        if (v === 'black' || v === 'white') return v;
+    } catch (_) { }
+    return 'black';
+}
+
+function saveHumanColor(v) {
+    try { localStorage.setItem(COLOR_KEY, v); } catch (_) { }
+}
+
+function getGoRank(skill) {
+    // Mapping 0-100 to traditional ranks:
+    // 0-60 -> 30k to 1k (1 rank per 2 points)
+    // 61-81 -> 1d to 7d (1 rank per 3 points)
+    // 82-100 -> 1p to 9p (1 rank per 2 points approx)
+    if (skill <= 60) {
+        const kyu = 30 - Math.floor(skill / 2);
+        return `${Math.max(1, kyu)}k`;
+    }
+    if (skill <= 81) {
+        const dan = 1 + Math.floor((skill - 61) / 3);
+        return `${Math.min(7, dan)}d`;
+    }
+    const pro = 1 + Math.floor((skill - 82) / 2);
+    return `${Math.min(9, pro)}p`;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function GoBoard({ onClose, isActive }) {
     const [state, setState] = useState(loadState);
     const [skillLevel, setSkillLevel] = useState(loadSkill);
+    const [playerSkill, setPlayerSkill] = useState(loadPlayerSkill);
+    const [humanColor, setHumanColor] = useState(loadHumanColor);
+    const [showNewGameModal, setShowNewGameModal] = useState(false);
     const [hoverPos, setHoverPos] = useState(null);
     const [aiThinking, setAiThinking] = useState(false);
     const aiTimerRef = useRef(null);
 
     const { board, currentPlayer, captures, consecutivePasses, previousBoard, gameOver, scores, moveCount } = state;
+    const aiColor = humanColor === 'black' ? 'white' : 'black';
 
     // Persist state
     useEffect(() => { saveState(state); }, [state]);
     useEffect(() => { saveSkill(skillLevel); }, [skillLevel]);
+    useEffect(() => { savePlayerSkill(playerSkill); }, [playerSkill]);
+    useEffect(() => { saveHumanColor(humanColor); }, [humanColor]);
 
     // Trigger AI move
     useEffect(() => {
-        if (!isActive || gameOver || currentPlayer !== 'white' || aiThinking) return;
+        if (!isActive || gameOver || currentPlayer !== aiColor || aiThinking) return;
 
         setAiThinking(true);
         aiTimerRef.current = setTimeout(() => {
             setState(prev => {
-                if (prev.gameOver || prev.currentPlayer !== 'white') return prev;
+                if (prev.gameOver || prev.currentPlayer !== aiColor) return prev;
 
-                const aiMove = pickAIMove(prev.board, prev.previousBoard, skillLevel);
+                const aiMove = pickAIMove(prev.board, prev.previousBoard, skillLevel, aiColor);
+
+                if (aiMove === 'resign') {
+                    const finalScores = computeScore(prev.board, prev.captures);
+                    return { ...prev, gameOver: true, scores: finalScores, resignedBy: aiColor, moveHistory: [...prev.moveHistory, { color: aiColor, resign: true }] };
+                }
 
                 if (aiMove === null) {
                     // AI passes
                     const newPasses = prev.consecutivePasses + 1;
                     if (newPasses >= 2) {
                         const finalScores = computeScore(prev.board, prev.captures);
-                        return { ...prev, consecutivePasses: newPasses, gameOver: true, scores: finalScores };
+                        return { ...prev, consecutivePasses: newPasses, gameOver: true, scores: finalScores, moveHistory: [...prev.moveHistory, { color: aiColor, pass: true }] };
                     }
-                    return { ...prev, currentPlayer: 'black', consecutivePasses: newPasses, moveCount: prev.moveCount + 1 };
+                    return { ...prev, currentPlayer: humanColor, consecutivePasses: newPasses, moveCount: prev.moveCount + 1, moveHistory: [...prev.moveHistory, { color: aiColor, pass: true }] };
                 }
 
-                const newBoard = applyMove(prev.board, aiMove, 'white', prev.previousBoard);
+                const newBoard = applyMove(prev.board, aiMove, aiColor, prev.previousBoard);
                 if (!newBoard) return prev;
 
-                const capturedCount = countCaptures(prev.board, aiMove, 'white');
+                const capturedCount = countCaptures(prev.board, aiMove, aiColor);
                 return {
                     ...prev,
                     board: newBoard,
                     previousBoard: [...prev.board],
-                    currentPlayer: 'black',
-                    captures: { ...prev.captures, white: prev.captures.white + capturedCount },
+                    currentPlayer: humanColor,
+                    captures: { ...prev.captures, [aiColor]: prev.captures[aiColor] + capturedCount },
                     consecutivePasses: 0,
                     moveCount: prev.moveCount + 1,
+                    moveHistory: [...prev.moveHistory, { color: aiColor, pos: aiMove }],
                 };
             });
             setAiThinking(false);
@@ -331,66 +401,157 @@ export default function GoBoard({ onClose, isActive }) {
             clearTimeout(aiTimerRef.current);
             setAiThinking(false);
         };
-    }, [isActive, currentPlayer, gameOver, skillLevel]);
+    }, [isActive, currentPlayer, gameOver, skillLevel, humanColor, aiColor]);
 
     const handleClick = useCallback((pos) => {
-        if (gameOver || currentPlayer !== 'black' || aiThinking) return;
+        if (gameOver || currentPlayer !== humanColor || aiThinking) return;
 
-        const newBoard = applyMove(board, pos, 'black', previousBoard);
+        const newBoard = applyMove(board, pos, humanColor, previousBoard);
         if (!newBoard) return;
 
-        const capturedCount = countCaptures(board, pos, 'black');
+        const capturedCount = countCaptures(board, pos, humanColor);
         const newPasses = 0;
 
         setState(prev => ({
             ...prev,
             board: newBoard,
             previousBoard: [...prev.board],
-            currentPlayer: 'white',
-            captures: { ...prev.captures, black: prev.captures.black + capturedCount },
+            currentPlayer: aiColor,
+            captures: { ...prev.captures, [humanColor]: prev.captures[humanColor] + capturedCount },
             consecutivePasses: newPasses,
             moveCount: prev.moveCount + 1,
+            moveHistory: [...prev.moveHistory, { color: humanColor, pos }],
         }));
-    }, [board, currentPlayer, gameOver, previousBoard, aiThinking]);
+    }, [board, currentPlayer, gameOver, previousBoard, aiThinking, humanColor, aiColor]);
 
     const handlePass = useCallback(() => {
-        if (gameOver || currentPlayer !== 'black' || aiThinking) return;
+        if (gameOver || currentPlayer !== humanColor || aiThinking) return;
 
         setState(prev => {
             const newPasses = prev.consecutivePasses + 1;
             if (newPasses >= 2) {
                 const finalScores = computeScore(prev.board, prev.captures);
-                const newSkill = finalScores.black > finalScores.white
+                const playerWon = finalScores[humanColor] > finalScores[aiColor];
+                const newSkill = playerWon
                     ? Math.min(100, skillLevel + 5)
                     : Math.max(0, skillLevel - 3);
                 saveSkill(newSkill);
                 setSkillLevel(newSkill);
-                return { ...prev, consecutivePasses: newPasses, gameOver: true, scores: finalScores };
+                return { ...prev, consecutivePasses: newPasses, gameOver: true, scores: finalScores, moveHistory: [...prev.moveHistory, { color: prev.currentPlayer, pass: true }] };
             }
-            return { ...prev, currentPlayer: 'white', consecutivePasses: newPasses, moveCount: prev.moveCount + 1 };
+            return { ...prev, currentPlayer: aiColor, consecutivePasses: newPasses, moveCount: prev.moveCount + 1, moveHistory: [...prev.moveHistory, { color: prev.currentPlayer, pass: true }] };
         });
-    }, [gameOver, currentPlayer, aiThinking, skillLevel]);
+    }, [gameOver, currentPlayer, aiThinking, skillLevel, humanColor, aiColor]);
 
-    // Adjust skill after game ends via AI pass completing the game
+    const handleResign = useCallback(() => {
+        if (gameOver || currentPlayer !== humanColor || aiThinking) return;
+
+        setState(prev => {
+            const finalScores = computeScore(prev.board, prev.captures);
+            return {
+                ...prev,
+                gameOver: true,
+                scores: finalScores,
+                resignedBy: humanColor,
+                moveHistory: [...prev.moveHistory, { color: humanColor, resign: true }]
+            };
+        });
+    }, [gameOver, currentPlayer, aiThinking, humanColor]);
+
+    // Adjust skill after game ends
     useEffect(() => {
         if (gameOver && scores) {
-            const newSkill = scores.black > scores.white
+            let playerWon = false;
+
+            if (state.resignedBy) {
+                playerWon = state.resignedBy === aiColor;
+            } else {
+                playerWon = scores[humanColor] > scores[aiColor];
+            }
+
+            // AI adjustment
+            const newSkill = playerWon
                 ? Math.min(100, skillLevel + 5)
                 : Math.max(0, skillLevel - 3);
             if (newSkill !== skillLevel) {
                 saveSkill(newSkill);
                 setSkillLevel(newSkill);
             }
+
+            // Player adjustment
+            const newPSkill = playerWon
+                ? Math.min(100, playerSkill + 4)
+                : Math.max(0, playerSkill - 2);
+            if (newPSkill !== playerSkill) {
+                savePlayerSkill(newPSkill);
+                setPlayerSkill(newPSkill);
+            }
         }
     }, [gameOver]);
 
-    const handleNewGame = useCallback(() => {
+    const handleNewGameClick = useCallback(() => {
+        setShowNewGameModal(true);
+    }, []);
+
+    const handleStartGame = useCallback((color) => {
+        setHumanColor(color);
+        saveHumanColor(color);
         clearTimeout(aiTimerRef.current);
         setAiThinking(false);
         const fresh = freshState();
         setState(fresh);
         saveState(fresh);
+        setShowNewGameModal(false);
     }, []);
+
+    const handleExportSGF = useCallback(() => {
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        const dateStr = new Date().toISOString().split('T')[0];
+
+        let sgf = `(;FF[4]GM[1]SZ[${SIZE}]`;
+        if (humanColor === 'black') {
+            sgf += `PW[Watchclock AI]PB[Human]WR[${getGoRank(skillLevel)}]BR[${getGoRank(playerSkill)}]DT[${dateStr}]`;
+        } else {
+            sgf += `PB[Watchclock AI]PW[Human]BR[${getGoRank(skillLevel)}]WR[${getGoRank(playerSkill)}]DT[${dateStr}]`;
+        }
+        if (gameOver) {
+            let resultStr = 'Draw';
+            if (state.resignedBy) {
+                const winner = state.resignedBy === 'black' ? 'W' : 'B';
+                resultStr = `${winner}+R`;
+            } else if (scores) {
+                const diff = Math.abs(scores.black - scores.white);
+                const winner = scores.black > scores.white ? 'B' : scores.white > scores.black ? 'W' : 'Draw';
+                resultStr = winner === 'Draw' ? 'Draw' : `${winner}+${diff.toFixed(1)}`;
+            }
+            sgf += `RE[${resultStr}]`;
+        }
+        sgf += '\n';
+
+        state.moveHistory.forEach(move => {
+            const colorCode = move.color === 'black' ? 'B' : 'W';
+            if (move.resign) {
+                // SGF doesn't strictly log the resign turn as a coordinate, but we can stop.
+                // The RE[] tag already dictates the result.
+            } else if (move.pass) {
+                sgf += `;${colorCode}[]`;
+            } else {
+                const [r, c] = rc(move.pos);
+                sgf += `;${colorCode}[${letters[c]}${letters[r]}]`;
+            }
+        });
+        sgf += ')';
+
+        const blob = new Blob([sgf], { type: 'application/x-go-sgf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `watchclock_go_${dateStr}.sgf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, [state.moveHistory, skillLevel, gameOver, scores]);
 
     // Find last placed stone
     const lastMove = useRef(null);
@@ -411,47 +572,18 @@ export default function GoBoard({ onClose, isActive }) {
     };
 
     // Determine ghost stone validity
-    const isValidHover = hoverPos !== null && board[hoverPos] === null && !gameOver && currentPlayer === 'black' && !aiThinking
-        && applyMove(board, hoverPos, 'black', previousBoard) !== null;
+    const isValidHover = hoverPos !== null && board[hoverPos] === null && !gameOver && currentPlayer === humanColor && !aiThinking
+        && applyMove(board, hoverPos, humanColor, previousBoard) !== null;
 
-    const winner = scores ? (scores.black > scores.white ? 'Black' : scores.white > scores.black ? 'White' : 'Draw') : null;
+    const winner = state.resignedBy
+        ? (state.resignedBy === 'black' ? 'White (Resignation)' : 'Black (Resignation)')
+        : (scores ? (scores.black > scores.white ? 'Black' : scores.white > scores.black ? 'White' : 'Draw') : null);
 
     if (!isActive) return null;
 
     return (
         <div className="goboard-container">
-            {/* Top Bar */}
-            <div className="goboard-topbar">
-                <div className="goboard-title-group">
-                    <span className="goboard-title">围棋 · Go</span>
-                    <span className="goboard-skill">AI Lv. {skillLevel}</span>
-                </div>
-                <div className="goboard-topbar-actions">
-                    {!gameOver && <button className="goboard-btn goboard-new" onClick={handleNewGame}>New</button>}
-                    <button className="goboard-btn goboard-close" onClick={onClose} aria-label="Close">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
-                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            {/* Status bar */}
-            <div className="goboard-status">
-                {gameOver ? (
-                    <span className="goboard-gameover">
-                        Game Over · {winner === 'Draw' ? 'Draw!' : `${winner} wins!`}
-                    </span>
-                ) : aiThinking ? (
-                    <span className="goboard-thinking"><span className="thinking-dots" /><span> AI thinking…</span></span>
-                ) : (
-                    <span className={`goboard-turn ${currentPlayer}`}>
-                        {currentPlayer === 'black' ? '\u23ef Your turn' : '\u25cb White\u2019s turn'}
-                    </span>
-                )}
-            </div>
-
-            {/* SVG Board */}
+            {/* Board Column (Left) */}
             <div className="goboard-board-wrap">
                 <svg
                     className="goboard-svg"
@@ -503,7 +635,7 @@ export default function GoBoard({ onClose, isActive }) {
                                 x={x - CELL / 2} y={y - CELL / 2}
                                 width={CELL} height={CELL}
                                 fill="transparent"
-                                style={{ cursor: board[i] === null && !gameOver && currentPlayer === 'black' && !aiThinking ? 'pointer' : 'default' }}
+                                style={{ cursor: board[i] === null && !gameOver && currentPlayer === humanColor && !aiThinking ? 'pointer' : 'default' }}
                                 onMouseEnter={() => setHoverPos(i)}
                                 onClick={() => handleClick(i)}
                             />
@@ -544,35 +676,125 @@ export default function GoBoard({ onClose, isActive }) {
                 </svg>
             </div>
 
-            {/* Score panel */}
-            <div className="goboard-scores">
-                <div className="goboard-score-item black-score">
-                    <span className="score-stone">⬤</span>
-                    <span className="score-label">Black</span>
-                    <span className="score-val">{scores ? scores.black.toFixed(0) : `${captures.black} cap`}</span>
+            {/* Sidebar Column (Right) */}
+            <div className="goboard-sidebar">
+                {/* Top Bar with actions */}
+                <div className="goboard-topbar">
+                    <div className="goboard-title-group">
+                        <span className="goboard-title">围棋 · Go</span>
+                        <span className="goboard-skill">AI: {getGoRank(skillLevel)}</span>
+                    </div>
+                    <div className="goboard-topbar-actions">
+                        <button className="goboard-btn goboard-close" onClick={onClose} aria-label="Close">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+                                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div className="goboard-score-divider" />
-                <div className="goboard-score-item white-score">
-                    <span className="score-stone">◯</span>
-                    <span className="score-label">White</span>
-                    <span className="score-val">{scores ? scores.white.toFixed(0) : `${captures.white} cap`}</span>
+
+                {/* Vertical spacer pushing everything below to its natural flow */}
+                <div className="goboard-sidebar-content">
+                    {/* Status area */}
+                    <div className="goboard-status">
+                        {gameOver ? (
+                            <span className="goboard-gameover">
+                                Game Over · {winner === 'Draw' ? 'Draw!' : `${winner} wins!`}
+                            </span>
+                        ) : aiThinking ? (
+                            <span className="goboard-thinking"><span className="thinking-dots" /><span> AI thinking…</span></span>
+                        ) : (
+                            <span className={`goboard-turn ${currentPlayer}`}>
+                                {currentPlayer === humanColor ? '\u23ef Your turn' : `\u25cb AI's turn`}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Scores panel */}
+                    <div className="goboard-scores">
+                        <div className="goboard-score-item black-score">
+                            <span className="score-stone">⬤</span>
+                            <div className="score-col">
+                                <span className="score-label">
+                                    Black {humanColor === 'black' ? `(You - ${getGoRank(playerSkill)})` : `(AI - ${getGoRank(skillLevel)})`}
+                                </span>
+                                <span className="score-val">{scores ? scores.black.toFixed(0) : `${captures.black} cap`}</span>
+                            </div>
+                        </div>
+                        <div className="goboard-score-divider" />
+                        <div className="goboard-score-item white-score">
+                            <span className="score-stone">◯</span>
+                            <div className="score-col">
+                                <span className="score-label">
+                                    White {humanColor === 'white' ? `(You - ${getGoRank(playerSkill)})` : `(AI - ${getGoRank(skillLevel)})`}
+                                </span>
+                                <span className="score-val">{scores ? scores.white.toFixed(0) : `${captures.white} cap`}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Action row at bottom */}
+                    <div className="goboard-actions">
+                        {gameOver ? (
+                            <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>Play Again</button>
+                        ) : (
+                            <>
+                                <button className="goboard-btn goboard-new" onClick={handleNewGameClick}>New Game</button>
+                                <button
+                                    className="goboard-btn goboard-pass"
+                                    onClick={handlePass}
+                                    disabled={currentPlayer !== humanColor || aiThinking}
+                                >
+                                    Pass Turn
+                                </button>
+                                <button
+                                    className="goboard-btn goboard-resign"
+                                    onClick={handleResign}
+                                    style={{ background: 'transparent', padding: '6px', fontSize: '0.75rem', marginTop: '-4px', border: 'none', opacity: 0.7 }}
+                                    disabled={currentPlayer !== humanColor || aiThinking}
+                                >
+                                    Resign
+                                </button>
+                            </>
+                        )}
+                        <button
+                            className="goboard-btn goboard-export"
+                            onClick={handleExportSGF}
+                            disabled={!state.moveHistory || state.moveHistory.length === 0}
+                            title="Export match to SGF format"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" style={{ marginRight: '6px' }}>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export SGF
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Action row */}
-            <div className="goboard-actions">
-                {gameOver ? (
-                    <button className="goboard-btn goboard-primary" onClick={handleNewGame}>Play Again</button>
-                ) : (
-                    <button
-                        className="goboard-btn goboard-pass"
-                        onClick={handlePass}
-                        disabled={currentPlayer !== 'black' || aiThinking}
-                    >
-                        Pass Turn
-                    </button>
-                )}
-            </div>
+            {/* New Game Modal */}
+            {showNewGameModal && (
+                <div className="goboard-modal-overlay">
+                    <div className="goboard-modal">
+                        <h3 className="goboard-modal-title">Choose your color</h3>
+                        <div className="goboard-modal-buttons">
+                            <button className="goboard-color-btn" onClick={() => handleStartGame('black')}>
+                                Play as Black ⚫︎
+                                <div className="goboard-color-desc">You move first</div>
+                            </button>
+                            <button className="goboard-color-btn" onClick={() => handleStartGame('white')}>
+                                Play as White ⚪︎
+                                <div className="goboard-color-desc">AI moves first</div>
+                            </button>
+                        </div>
+                        <button className="goboard-modal-cancel" onClick={() => setShowNewGameModal(false)}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

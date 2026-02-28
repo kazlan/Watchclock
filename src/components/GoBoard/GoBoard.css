@@ -4,32 +4,163 @@
     width: 100%;
     height: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 10px 12px 10px 12px;
+    flex-direction: row;
+    gap: 20px;
+    padding: 0;
     box-sizing: border-box;
     overflow: hidden;
+    position: relative;
+}
+
+/* ── Board (Left) ── */
+.goboard-board-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    height: 100%;
+}
+
+.goboard-svg {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: 100%;
+    max-width: 100%;
+    display: block;
+    border-radius: 8px;
+    box-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ── Sidebar (Right) ── */
+.goboard-sidebar {
+    width: 200px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.goboard-sidebar-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: center;
+    gap: 24px;
 }
 
 /* ── Top Bar ── */
 .goboard-topbar {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     flex-shrink: 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 .goboard-title-group {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.goboard-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .goboard-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: 0.02em;
+}
+
+/* ── Modal / Popup ── */
+.goboard-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.goboard-modal {
+    background: var(--panel-bg, rgba(30, 30, 30, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    min-width: 250px;
+    color: var(--text-primary);
+}
+
+.goboard-modal-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.goboard-modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+.goboard-color-btn {
+    font-size: 1.05rem;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    background: rgba(128, 128, 128, 0.15);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.goboard-color-btn:hover {
+    background: rgba(128, 128, 128, 0.25);
+    border-color: rgba(128, 128, 128, 0.5);
+}
+
+.goboard-color-desc {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: normal;
+}
+
+.goboard-modal-cancel {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    margin-top: 8px;
+    padding: 8px;
+}
+
+.goboard-modal-cancel:hover {
+    color: var(--text-primary);
 }
 
 .goboard-skill {
@@ -42,70 +173,13 @@
     border: 1px solid rgba(128, 128, 128, 0.15);
 }
 
-.goboard-topbar-actions {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-
-/* ── Buttons ── */
-.goboard-btn {
-    font-family: inherit;
-    font-size: 0.7rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 20px;
-    border: 1px solid rgba(128, 128, 128, 0.25);
-    background: rgba(128, 128, 128, 0.1);
-    color: var(--text-secondary);
-    padding: 4px 10px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.goboard-btn:hover:not(:disabled) {
-    background: rgba(128, 128, 128, 0.2);
-    color: var(--text-primary);
-}
-
-.goboard-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.goboard-close {
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    border-radius: 50%;
-}
-
-.goboard-primary {
-    font-size: 0.8rem;
-    padding: 6px 22px;
-    background: var(--accent-clock-m, rgba(56, 189, 248, 0.15));
-    border-color: var(--accent-clock-m, rgba(56, 189, 248, 0.4));
-    color: var(--text-primary);
-}
-
-.goboard-primary:hover {
-    background: var(--accent-clock-m, rgba(56, 189, 248, 0.3));
-}
-
-.goboard-pass {
-    font-size: 0.75rem;
-    padding: 5px 18px;
-}
-
 /* ── Status ── */
 .goboard-status {
     flex-shrink: 0;
     text-align: center;
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 500;
-    height: 18px;
+    height: 20px;
 }
 
 .goboard-turn.black {
@@ -119,7 +193,7 @@
 .goboard-gameover {
     color: var(--accent-clock-s, #e879f9);
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: 0.85rem;
 }
 
 .goboard-thinking {
@@ -147,50 +221,35 @@
     }
 }
 
-/* ── Board ── */
-.goboard-board-wrap {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 0;
-}
-
-.goboard-svg {
-    width: 100%;
-    height: 100%;
-    max-width: 290px;
-    max-height: 290px;
-    display: block;
-    border-radius: 8px;
-    box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
 
 /* ── Scores ── */
 .goboard-scores {
     flex-shrink: 0;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     justify-content: center;
-    gap: 0;
+    gap: 12px;
     background: rgba(128, 128, 128, 0.07);
     border: 1px solid rgba(128, 128, 128, 0.12);
     border-radius: 12px;
-    padding: 6px 12px;
+    padding: 16px;
 }
 
 .goboard-score-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    flex: 1;
-    justify-content: center;
+    gap: 12px;
+}
+
+.score-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .score-stone {
-    font-size: 0.75rem;
+    font-size: 1.2rem;
 }
 
 .black-score .score-stone {
@@ -209,25 +268,75 @@
 }
 
 .score-val {
-    font-size: 0.82rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--text-primary);
-    min-width: 32px;
-    text-align: right;
 }
 
 .goboard-score-divider {
-    width: 1px;
-    height: 20px;
+    height: 1px;
+    width: 100%;
     background: rgba(128, 128, 128, 0.2);
-    margin: 0 8px;
 }
 
-/* ── Actions ── */
+/* ── Actions / Buttons ── */
 .goboard-actions {
     flex-shrink: 0;
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.goboard-btn {
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 20px;
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    background: rgba(128, 128, 128, 0.1);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    width: 100%;
+}
+
+.goboard-btn:hover:not(:disabled) {
+    background: rgba(128, 128, 128, 0.2);
+    color: var(--text-primary);
+}
+
+.goboard-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.goboard-close {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.goboard-primary {
+    font-size: 0.85rem;
+    padding: 10px 22px;
+    background: var(--accent-clock-m, rgba(56, 189, 248, 0.15));
+    border-color: var(--accent-clock-m, rgba(56, 189, 248, 0.4));
+    color: var(--text-primary);
+}
+
+.goboard-primary:hover {
+    background: var(--accent-clock-m, rgba(56, 189, 248, 0.3));
+}
+
+.goboard-pass {
+    font-size: 0.8rem;
+    padding: 8px 18px;
 }
 
 /* ── Theme overrides ── */

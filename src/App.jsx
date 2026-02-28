@@ -136,7 +136,7 @@ const TIMERS_CONFIG = [
 ];
 
 function App() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('watchclock-theme') || 'dark');
   const [activeTimerId, setActiveTimerId] = useState(null);
   const [runningTimerId, setRunningTimerId] = useState(null);
   const [activeEndTime, setActiveEndTime] = useState(null);
@@ -231,6 +231,7 @@ function App() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('watchclock-theme', theme);
   }, [theme]);
 
   // Fetch Weather effect
