@@ -749,8 +749,8 @@ export default function GoBoard({ onClose, isActive }) {
         && applyMove(board, hoverPos, humanColor, previousBoard) !== null;
 
     const winner = state.resignedBy
-        ? (state.resignedBy === 'black' ? 'White (Resignation)' : 'Black (Resignation)')
-        : (scores ? (scores.black > scores.white ? 'Black' : scores.white > scores.black ? 'White' : 'Draw') : null);
+        ? (state.resignedBy === 'black' ? 'Blancas (Renuncia)' : 'Negras (Renuncia)')
+        : (scores ? (scores.black > scores.white ? 'Negras' : scores.white > scores.black ? 'Blancas' : 'Empate') : null);
 
     if (!isActive) return null;
 
@@ -762,13 +762,13 @@ export default function GoBoard({ onClose, isActive }) {
                 <div className="goboard-status goboard-status-top">
                     {gameOver ? (
                         <span className="goboard-gameover">
-                            Game Over · {winner === 'Draw' ? 'Draw!' : `${winner} wins!`}
+                            Fin · {winner === 'Empate' ? '¡Empate!' : `¡Ganan ${winner}!`}
                         </span>
                     ) : aiThinking ? (
-                        <span className="goboard-thinking"><span className="thinking-dots" /><span> AI thinking…</span></span>
+                        <span className="goboard-thinking"><span className="thinking-dots" /><span> IA pensando…</span></span>
                     ) : (
                         <span className={`goboard-turn ${currentPlayer}`}>
-                            {currentPlayer === humanColor ? '\u23ef Your turn' : `\u25cb AI's turn`}
+                            {currentPlayer === humanColor ? '\u23ef Tu turno' : `\u25cb Turno de la IA`}
                         </span>
                     )}
                 </div>
@@ -876,8 +876,8 @@ export default function GoBoard({ onClose, isActive }) {
                             className="goboard-btn goboard-close"
                             onClick={handleExportSGF}
                             disabled={!state.moveHistory || state.moveHistory.length === 0}
-                            title="Export SGF"
-                            aria-label="Export SGF"
+                            title="Exportar SGF"
+                            aria-label="Exportar SGF"
                         >
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -888,8 +888,8 @@ export default function GoBoard({ onClose, isActive }) {
                         <button
                             className="goboard-btn goboard-close"
                             onClick={() => setSoundEnabled(p => !p)}
-                            title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
-                            aria-label="Toggle sound"
+                            title={soundEnabled ? 'Silenciar' : 'Activar sonido'}
+                            aria-label="Alternar sonido"
                         >
                             {soundEnabled ? (
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
@@ -905,7 +905,7 @@ export default function GoBoard({ onClose, isActive }) {
                                 </svg>
                             )}
                         </button>
-                        <button className="goboard-btn goboard-close" onClick={onClose} aria-label="Close">
+                        <button className="goboard-btn goboard-close" onClick={onClose} aria-label="Cerrar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
                                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
@@ -922,9 +922,9 @@ export default function GoBoard({ onClose, isActive }) {
                             <span className="score-stone">⬤</span>
                             <div className="score-col">
                                 <span className="score-label">
-                                    Black {humanColor === 'black' ? `(You - ${getGoRank(playerSkill)})` : `(AI - ${getGoRank(skillLevel)})`}
+                                    Negras {humanColor === 'black' ? `(Tú - ${getGoRank(playerSkill)})` : `(IA - ${getGoRank(skillLevel)})`}
                                 </span>
-                                <span className="score-val">{scores ? scores.black.toFixed(0) : `${captures.black} cap`}</span>
+                                <span className="score-val">{scores ? scores.black.toFixed(0) : `${captures.black} prs`}</span>
                             </div>
                         </div>
                         <div className="goboard-score-divider" />
@@ -932,9 +932,9 @@ export default function GoBoard({ onClose, isActive }) {
                             <span className="score-stone">◯</span>
                             <div className="score-col">
                                 <span className="score-label">
-                                    White {humanColor === 'white' ? `(You - ${getGoRank(playerSkill)})` : `(AI - ${getGoRank(skillLevel)})`}
+                                    Blancas {humanColor === 'white' ? `(Tú - ${getGoRank(playerSkill)})` : `(IA - ${getGoRank(skillLevel)})`}
                                 </span>
-                                <span className="score-val">{scores ? scores.white.toFixed(0) : `${captures.white} cap`}</span>
+                                <span className="score-val">{scores ? scores.white.toFixed(0) : `${captures.white} prs`}</span>
                             </div>
                         </div>
                     </div>
@@ -946,7 +946,7 @@ export default function GoBoard({ onClose, isActive }) {
                         const draws = matchHistory.filter(m => m.result === 'draw').length;
                         return (
                             <div className="goboard-stats">
-                                <span className="score-label">Record: {wins}W / {losses}L / {draws}D</span>
+                                <span className="score-label">Historial: {wins}V / {losses}D / {draws}E</span>
                             </div>
                         );
                     })()}
@@ -954,17 +954,17 @@ export default function GoBoard({ onClose, isActive }) {
                     {/* Action row at bottom */}
                     <div className="goboard-actions">
                         {gameOver ? (
-                            <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>Play Again</button>
+                            <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>Jugar de nuevo</button>
                         ) : (
                             <>
-                                <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>New Game</button>
+                                <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>Nueva partida</button>
                                 <div className="goboard-icon-row">
                                     <button
                                         className="goboard-icon-btn"
                                         onClick={() => setConfirmAction('pass')}
                                         disabled={currentPlayer !== humanColor || aiThinking}
-                                        title="Pass"
-                                        aria-label="Pass"
+                                        title="Pasar"
+                                        aria-label="Pasar"
                                     >
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
                                             <polyline points="9 18 15 12 9 6"></polyline>
@@ -974,8 +974,8 @@ export default function GoBoard({ onClose, isActive }) {
                                         className="goboard-icon-btn"
                                         onClick={() => setConfirmAction('undo')}
                                         disabled={!state.moveHistory || state.moveHistory.length === 0 || aiThinking}
-                                        title="Undo"
-                                        aria-label="Undo"
+                                        title="Deshacer"
+                                        aria-label="Deshacer"
                                     >
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
                                             <polyline points="1 4 1 10 7 10"></polyline>
@@ -986,8 +986,8 @@ export default function GoBoard({ onClose, isActive }) {
                                         className="goboard-icon-btn goboard-icon-danger"
                                         onClick={() => setConfirmAction('resign')}
                                         disabled={currentPlayer !== humanColor || aiThinking}
-                                        title="Resign"
-                                        aria-label="Resign"
+                                        title="Rendirse"
+                                        aria-label="Rendirse"
                                     >
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
                                             <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
@@ -1027,19 +1027,19 @@ export default function GoBoard({ onClose, isActive }) {
             {showNewGameModal && (
                 <div className="goboard-modal-overlay">
                     <div className="goboard-modal">
-                        <h3 className="goboard-modal-title">Choose your color</h3>
+                        <h3 className="goboard-modal-title">Elige tu color</h3>
                         <div className="goboard-modal-buttons">
                             <button className="goboard-color-btn" onClick={() => handleStartGame('black')}>
-                                Play as Black ⚫︎
-                                <div className="goboard-color-desc">You move first</div>
+                                Jugar con Negras ⚫︎
+                                <div className="goboard-color-desc">Tú mueves primero</div>
                             </button>
                             <button className="goboard-color-btn" onClick={() => handleStartGame('white')}>
-                                Play as White ⚪︎
-                                <div className="goboard-color-desc">AI moves first</div>
+                                Jugar con Blancas ⚪︎
+                                <div className="goboard-color-desc">La IA mueve primero</div>
                             </button>
                         </div>
                         <button className="goboard-modal-cancel" onClick={() => setShowNewGameModal(false)}>
-                            Cancel
+                            Cancelar
                         </button>
                     </div>
                 </div>

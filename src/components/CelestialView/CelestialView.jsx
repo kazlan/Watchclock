@@ -52,7 +52,7 @@ export default function CelestialView({ onClose, isActive, location }) {
 
     return (
         <div className="celestial-container">
-            <button className="celestial-close-btn" onClick={onClose} aria-label="Close View">
+            <button className="celestial-close-btn" onClick={onClose} aria-label="Cerrar vista">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -63,7 +63,7 @@ export default function CelestialView({ onClose, isActive, location }) {
                 {location ? (
                     <Scene location={location} date={displayDate} />
                 ) : (
-                    <div style={{ color: 'white', padding: '2rem' }}>Awaiting location data...</div>
+                    <div style={{ color: 'white', padding: '2rem' }}>Esperando datos de ubicación...</div>
                 )}
             </div>
 
@@ -71,7 +71,7 @@ export default function CelestialView({ onClose, isActive, location }) {
             <div className="celestial-controls">
                 <div className="celestial-info-row">
                     <h3 className="celestial-title">Hemisferio celeste</h3>
-                    <div className="celestial-time" onClick={resetTime} style={{ cursor: 'pointer' }} title="Click to reset to now">
+                    <div className="celestial-time" onClick={resetTime} style={{ cursor: 'pointer' }} title="Clic para volver al momento actual">
                         {dateStr}
                     </div>
                 </div>
@@ -88,7 +88,7 @@ export default function CelestialView({ onClose, isActive, location }) {
 
                 <div className="time-readout">
                     <span>-24H</span>
-                    <span>{offsetHours === 0 ? 'LIVE' : `${offsetHours > 0 ? '+' : ''}${Math.round(offsetHours)}H`}</span>
+                    <span>{offsetHours === 0 ? 'EN VIVO' : `${offsetHours > 0 ? '+' : ''}${Math.round(offsetHours)}H`}</span>
                     <span>+24H</span>
                 </div>
             </div>
