@@ -57,9 +57,11 @@ export default function DigitalClock({ theme, endTime }) {
 
         return (
             <div className={`digital-clock-container ${theme}-digital countdown-mode`}>
-                <span className="digit">{m}</span>
-                <span className="colon">:</span>
-                <span className="digit">{s}</span>
+                <div className="time-display">
+                    <span className="digit">{m}</span>
+                    <span className="colon">:</span>
+                    <span className="digit">{s}</span>
+                </div>
             </div>
         );
     }

@@ -1,0 +1,530 @@
+[
+    {
+        "name": "Andromeda",
+        "abbr": "And",
+        "ra": 0.8,
+        "dec": 37.0
+    },
+    {
+        "name": "Antlia",
+        "abbr": "Ant",
+        "ra": 10.3,
+        "dec": -35.0
+    },
+    {
+        "name": "Apus",
+        "abbr": "Aps",
+        "ra": 16.0,
+        "dec": -75.0
+    },
+    {
+        "name": "Aquarius",
+        "abbr": "Aqr",
+        "ra": 22.3,
+        "dec": -10.0
+    },
+    {
+        "name": "Aquila",
+        "abbr": "Aql",
+        "ra": 19.7,
+        "dec": 3.0
+    },
+    {
+        "name": "Ara",
+        "abbr": "Ara",
+        "ra": 17.4,
+        "dec": -56.0
+    },
+    {
+        "name": "Aries",
+        "abbr": "Ari",
+        "ra": 2.6,
+        "dec": 21.0
+    },
+    {
+        "name": "Auriga",
+        "abbr": "Aur",
+        "ra": 6.0,
+        "dec": 42.0
+    },
+    {
+        "name": "Boötes",
+        "abbr": "Boo",
+        "ra": 14.7,
+        "dec": 31.0
+    },
+    {
+        "name": "Caelum",
+        "abbr": "Cae",
+        "ra": 4.7,
+        "dec": -38.0
+    },
+    {
+        "name": "Camelopardalis",
+        "abbr": "Cam",
+        "ra": 6.1,
+        "dec": 69.0
+    },
+    {
+        "name": "Cancer",
+        "abbr": "Cnc",
+        "ra": 8.6,
+        "dec": 20.0
+    },
+    {
+        "name": "Canes Venatici",
+        "abbr": "CVn",
+        "ra": 13.1,
+        "dec": 40.0
+    },
+    {
+        "name": "Canis Major",
+        "abbr": "CMa",
+        "ra": 6.8,
+        "dec": -22.0
+    },
+    {
+        "name": "Canis Minor",
+        "abbr": "CMi",
+        "ra": 7.6,
+        "dec": 6.0
+    },
+    {
+        "name": "Capricornus",
+        "abbr": "Cap",
+        "ra": 21.0,
+        "dec": -18.0
+    },
+    {
+        "name": "Carina",
+        "abbr": "Car",
+        "ra": 8.7,
+        "dec": -63.0
+    },
+    {
+        "name": "Cassiopeia",
+        "abbr": "Cas",
+        "ra": 1.0,
+        "dec": 62.0
+    },
+    {
+        "name": "Centaurus",
+        "abbr": "Cen",
+        "ra": 13.1,
+        "dec": -47.0
+    },
+    {
+        "name": "Cepheus",
+        "abbr": "Cep",
+        "ra": 22.0,
+        "dec": 71.0
+    },
+    {
+        "name": "Cetus",
+        "abbr": "Cet",
+        "ra": 1.7,
+        "dec": -7.0
+    },
+    {
+        "name": "Chamaeleon",
+        "abbr": "Cha",
+        "ra": 10.7,
+        "dec": -79.0
+    },
+    {
+        "name": "Circinus",
+        "abbr": "Cir",
+        "ra": 14.6,
+        "dec": -64.0
+    },
+    {
+        "name": "Columba",
+        "abbr": "Col",
+        "ra": 5.9,
+        "dec": -35.0
+    },
+    {
+        "name": "Coma Berenices",
+        "abbr": "Com",
+        "ra": 12.8,
+        "dec": 22.0
+    },
+    {
+        "name": "Corona Australis",
+        "abbr": "CrA",
+        "ra": 19.0,
+        "dec": -40.0
+    },
+    {
+        "name": "Corona Borealis",
+        "abbr": "CrB",
+        "ra": 15.8,
+        "dec": 33.0
+    },
+    {
+        "name": "Corvus",
+        "abbr": "Crv",
+        "ra": 12.4,
+        "dec": -18.0
+    },
+    {
+        "name": "Crater",
+        "abbr": "Crt",
+        "ra": 11.4,
+        "dec": -15.0
+    },
+    {
+        "name": "Crux",
+        "abbr": "Cru",
+        "ra": 12.4,
+        "dec": -60.0
+    },
+    {
+        "name": "Cygnus",
+        "abbr": "Cyg",
+        "ra": 20.6,
+        "dec": 42.0
+    },
+    {
+        "name": "Delphinus",
+        "abbr": "Del",
+        "ra": 20.7,
+        "dec": 12.0
+    },
+    {
+        "name": "Dorado",
+        "abbr": "Dor",
+        "ra": 5.2,
+        "dec": -60.0
+    },
+    {
+        "name": "Draco",
+        "abbr": "Dra",
+        "ra": 15.1,
+        "dec": 67.0
+    },
+    {
+        "name": "Equuleus",
+        "abbr": "Equ",
+        "ra": 21.2,
+        "dec": 8.0
+    },
+    {
+        "name": "Eridanus",
+        "abbr": "Eri",
+        "ra": 3.3,
+        "dec": -29.0
+    },
+    {
+        "name": "Fornax",
+        "abbr": "For",
+        "ra": 2.8,
+        "dec": -31.0
+    },
+    {
+        "name": "Gemini",
+        "abbr": "Gem",
+        "ra": 7.1,
+        "dec": 23.0
+    },
+    {
+        "name": "Grus",
+        "abbr": "Gru",
+        "ra": 22.5,
+        "dec": -47.0
+    },
+    {
+        "name": "Hercules",
+        "abbr": "Her",
+        "ra": 17.4,
+        "dec": 27.0
+    },
+    {
+        "name": "Horologium",
+        "abbr": "Hor",
+        "ra": 3.3,
+        "dec": -54.0
+    },
+    {
+        "name": "Hydra",
+        "abbr": "Hya",
+        "ra": 10.2,
+        "dec": -20.0
+    },
+    {
+        "name": "Hydrus",
+        "abbr": "Hyi",
+        "ra": 2.3,
+        "dec": -70.0
+    },
+    {
+        "name": "Indus",
+        "abbr": "Ind",
+        "ra": 21.5,
+        "dec": -55.0
+    },
+    {
+        "name": "Lacerta",
+        "abbr": "Lac",
+        "ra": 22.5,
+        "dec": 45.0
+    },
+    {
+        "name": "Leo",
+        "abbr": "Leo",
+        "ra": 10.7,
+        "dec": 15.0
+    },
+    {
+        "name": "Leo Minor",
+        "abbr": "LMi",
+        "ra": 10.2,
+        "dec": 33.0
+    },
+    {
+        "name": "Lepus",
+        "abbr": "Lep",
+        "ra": 5.6,
+        "dec": -19.0
+    },
+    {
+        "name": "Libra",
+        "abbr": "Lib",
+        "ra": 15.2,
+        "dec": -15.0
+    },
+    {
+        "name": "Lupus",
+        "abbr": "Lup",
+        "ra": 15.2,
+        "dec": -43.0
+    },
+    {
+        "name": "Lynx",
+        "abbr": "Lyn",
+        "ra": 7.9,
+        "dec": 48.0
+    },
+    {
+        "name": "Lyra",
+        "abbr": "Lyr",
+        "ra": 18.9,
+        "dec": 37.0
+    },
+    {
+        "name": "Mensa",
+        "abbr": "Men",
+        "ra": 5.4,
+        "dec": -77.0
+    },
+    {
+        "name": "Microscopium",
+        "abbr": "Mic",
+        "ra": 21.0,
+        "dec": -36.0
+    },
+    {
+        "name": "Monoceros",
+        "abbr": "Mon",
+        "ra": 7.1,
+        "dec": -4.0
+    },
+    {
+        "name": "Musca",
+        "abbr": "Mus",
+        "ra": 12.5,
+        "dec": -70.0
+    },
+    {
+        "name": "Norma",
+        "abbr": "Nor",
+        "ra": 16.1,
+        "dec": -50.0
+    },
+    {
+        "name": "Octans",
+        "abbr": "Oct",
+        "ra": 22.0,
+        "dec": -82.0
+    },
+    {
+        "name": "Ophiuchus",
+        "abbr": "Oph",
+        "ra": 17.4,
+        "dec": -8.0
+    },
+    {
+        "name": "Orion",
+        "abbr": "Ori",
+        "ra": 5.6,
+        "dec": 3.0
+    },
+    {
+        "name": "Pavo",
+        "abbr": "Pav",
+        "ra": 19.6,
+        "dec": -65.0
+    },
+    {
+        "name": "Pegasus",
+        "abbr": "Peg",
+        "ra": 22.7,
+        "dec": 19.0
+    },
+    {
+        "name": "Perseus",
+        "abbr": "Per",
+        "ra": 3.4,
+        "dec": 45.0
+    },
+    {
+        "name": "Phoenix",
+        "abbr": "Phe",
+        "ra": 0.9,
+        "dec": -48.0
+    },
+    {
+        "name": "Pictor",
+        "abbr": "Pic",
+        "ra": 5.7,
+        "dec": -53.0
+    },
+    {
+        "name": "Pisces",
+        "abbr": "Psc",
+        "ra": 0.5,
+        "dec": 13.0
+    },
+    {
+        "name": "Piscis Austrinus",
+        "abbr": "PsA",
+        "ra": 22.3,
+        "dec": -31.0
+    },
+    {
+        "name": "Puppis",
+        "abbr": "Pup",
+        "ra": 7.3,
+        "dec": -31.0
+    },
+    {
+        "name": "Pyxis",
+        "abbr": "Pyx",
+        "ra": 8.9,
+        "dec": -27.0
+    },
+    {
+        "name": "Reticulum",
+        "abbr": "Ret",
+        "ra": 3.9,
+        "dec": -62.0
+    },
+    {
+        "name": "Sagitta",
+        "abbr": "Sge",
+        "ra": 19.7,
+        "dec": 19.0
+    },
+    {
+        "name": "Sagittarius",
+        "abbr": "Sgr",
+        "ra": 19.1,
+        "dec": -29.0
+    },
+    {
+        "name": "Scorpius",
+        "abbr": "Sco",
+        "ra": 16.9,
+        "dec": -37.0
+    },
+    {
+        "name": "Sculptor",
+        "abbr": "Scl",
+        "ra": 0.4,
+        "dec": -33.0
+    },
+    {
+        "name": "Scutum",
+        "abbr": "Sct",
+        "ra": 18.7,
+        "dec": -10.0
+    },
+    {
+        "name": "Serpens",
+        "abbr": "Ser",
+        "ra": 16.9,
+        "dec": 6.0
+    },
+    {
+        "name": "Sextans",
+        "abbr": "Sex",
+        "ra": 10.3,
+        "dec": -2.0
+    },
+    {
+        "name": "Taurus",
+        "abbr": "Tau",
+        "ra": 4.7,
+        "dec": 16.0
+    },
+    {
+        "name": "Telescopium",
+        "abbr": "Tel",
+        "ra": 19.3,
+        "dec": -51.0
+    },
+    {
+        "name": "Triangulum",
+        "abbr": "Tri",
+        "ra": 2.2,
+        "dec": 32.0
+    },
+    {
+        "name": "Triangulum Australe",
+        "abbr": "TrA",
+        "ra": 16.1,
+        "dec": -65.0
+    },
+    {
+        "name": "Tucana",
+        "abbr": "Tuc",
+        "ra": 23.8,
+        "dec": -66.0
+    },
+    {
+        "name": "Ursa Major",
+        "abbr": "UMa",
+        "ra": 11.1,
+        "dec": 51.0
+    },
+    {
+        "name": "Ursa Minor",
+        "abbr": "UMi",
+        "ra": 15.0,
+        "dec": 78.0
+    },
+    {
+        "name": "Vela",
+        "abbr": "Vel",
+        "ra": 9.6,
+        "dec": -47.0
+    },
+    {
+        "name": "Virgo",
+        "abbr": "Vir",
+        "ra": 13.4,
+        "dec": -4.0
+    },
+    {
+        "name": "Volans",
+        "abbr": "Vol",
+        "ra": 7.8,
+        "dec": -69.0
+    },
+    {
+        "name": "Vulpecula",
+        "abbr": "Vul",
+        "ra": 20.2,
+        "dec": 25.0
+    }
+]

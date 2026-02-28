@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Stars } from '@react-three/drei';
+import { OrbitControls, Stars, Text, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import { Body, SearchAltitude, MoonPhase, Equator, Horizon, Observer } from 'astronomy-engine';
 import starsData from '../../data/stars.json';
 import constellationsData from '../../data/constellations.json';
+import constellationNames from '../../data/constellationNames.json';
 
 // Utility to convert Altitude & Azimuth to 3D Sphere Cartesian
 // Alt: 0 is horizon, 90 is zenith.
@@ -141,6 +142,45 @@ const Constellations = ({ location, date }) => {
     );
 };
 
+const ConstellationLabels = ({ location, date }) => {
+    const labels = useMemo(() => {
+        const obs = new Observer(location.latitude, location.longitude, 0);
+        const visible = [];
+
+        constellationNames.forEach(c => {
+            const hor = Horizon(date, obs, c.ra, c.dec, "normal");
+            if (hor.altitude > 5) {
+                const [x, y, z] = getCartesian(hor.altitude, hor.azimuth, 46);
+                visible.push({ name: c.name, pos: [x, y, z], alt: hor.altitude });
+            }
+        });
+
+        return visible;
+    }, [location, date]);
+
+    if (labels.length === 0) return null;
+
+    return (
+        <group>
+            {labels.map((label) => (
+                <Billboard key={label.name} position={label.pos} follow lockX={false} lockY={false} lockZ={false}>
+                    <Text
+                        fontSize={1.2}
+                        color="#8ba4c7"
+                        anchorX="center"
+                        anchorY="bottom"
+                        outlineWidth={0.06}
+                        outlineColor="#0b111a"
+                        fillOpacity={Math.min(0.85, label.alt / 30)}
+                    >
+                        {label.name}
+                    </Text>
+                </Billboard>
+            ))}
+        </group>
+    );
+};
+
 const Planet = ({ body, location, date, color, size, name }) => {
     const { alt, pos } = useMemo(() => {
         try {
@@ -165,10 +205,19 @@ const Planet = ({ body, location, date, color, size, name }) => {
                 <sphereGeometry args={[size, 16, 16]} />
                 <meshBasicMaterial color={color} />
             </mesh>
-            {/* Simple Label */}
-            <mesh position={[0, -size - 1, 0]}>
-                <boxGeometry args={[0, 0, 0]} />
-            </mesh>
+            {/* Planet Label */}
+            <Billboard position={[0, -size - 0.8, 0]} follow lockX={false} lockY={false} lockZ={false}>
+                <Text
+                    fontSize={0.9}
+                    color={color}
+                    anchorX="center"
+                    anchorY="top"
+                    outlineWidth={0.05}
+                    outlineColor="#0b111a"
+                >
+                    {name}
+                </Text>
+            </Billboard>
         </group>
     );
 };
@@ -212,13 +261,16 @@ export default function Scene({ location, date }) {
             {/* Constellation Lines */}
             <Constellations location={location} date={date} />
 
-            {/* Planets & Luminaries */}
-            <Planet body={Body.Sun} name="Sun" location={location} date={date} color="#fbbf24" size={2} />
-            <Planet body={Body.Moon} name="Moon" location={location} date={date} color="#e2e8f0" size={1.8} />
+            {/* Constellation Labels */}
+            <ConstellationLabels location={location} date={date} />
+
+            {/* Planetas y Luminarias */}
+            <Planet body={Body.Sun} name="Sol" location={location} date={date} color="#fbbf24" size={2} />
+            <Planet body={Body.Moon} name="Luna" location={location} date={date} color="#e2e8f0" size={1.8} />
             <Planet body={Body.Venus} name="Venus" location={location} date={date} color="#fcd34d" size={0.8} />
-            <Planet body={Body.Mars} name="Mars" location={location} date={date} color="#ef4444" size={0.6} />
-            <Planet body={Body.Jupiter} name="Jupiter" location={location} date={date} color="#fdba74" size={1.2} />
-            <Planet body={Body.Saturn} name="Saturn" location={location} date={date} color="#fde68a" size={1.0} />
+            <Planet body={Body.Mars} name="Marte" location={location} date={date} color="#ef4444" size={0.6} />
+            <Planet body={Body.Jupiter} name="Júpiter" location={location} date={date} color="#fdba74" size={1.2} />
+            <Planet body={Body.Saturn} name="Saturno" location={location} date={date} color="#fde68a" size={1.0} />
 
             {/* Ambient subtle grid */}
             <gridHelper args={[100, 20, '#1e293b', '#0f172a']} position={[0, -0.4, 0]} />
