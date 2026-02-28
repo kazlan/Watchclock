@@ -7,6 +7,7 @@ import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
 import SpotifyLibrary from './components/SpotifyLibrary/SpotifyLibrary'
 import CalendarView from './components/CalendarView/CalendarView'
 import CelestialView from './components/CelestialView/CelestialView'
+import SteampunkBackground from './components/SteampunkBackground/SteampunkBackground'
 import './index.css'
 import './index.css'
 import './App.css'
@@ -277,6 +278,7 @@ function App() {
         <div className="aurora-blob blob-3"></div>
       </div>
       <div className="tablet-frame">
+        {theme === 'steam' && <SteampunkBackground />}
         <div className="utility-header">
           <button
             onClick={toggleWakeLock}
