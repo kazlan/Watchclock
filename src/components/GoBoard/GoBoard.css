@@ -354,6 +354,46 @@
     padding: 8px 18px;
 }
 
+/* ── Icon-only action row ── */
+.goboard-icon-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.goboard-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(128, 128, 128, 0.25);
+    background: rgba(128, 128, 128, 0.1);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.goboard-icon-btn:hover:not(:disabled) {
+    background: rgba(128, 128, 128, 0.25);
+    color: var(--text-primary);
+    transform: scale(1.08);
+}
+
+.goboard-icon-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.goboard-icon-danger:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
 /* ── Theme overrides ── */
 [data-theme='steam'] .goboard-primary {
     background: rgba(217, 119, 6, 0.15);

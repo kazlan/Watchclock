@@ -443,6 +443,7 @@ export default function GoBoard({ onClose, isActive }) {
     });
     const [hoverPos, setHoverPos] = useState(null);
     const [aiThinking, setAiThinking] = useState(false);
+    const [confirmAction, setConfirmAction] = useState(null);
     const aiTimerRef = useRef(null);
 
     // Sync sound state to global flag
@@ -956,28 +957,42 @@ export default function GoBoard({ onClose, isActive }) {
                             <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>Play Again</button>
                         ) : (
                             <>
-                                <button className="goboard-btn goboard-new" onClick={handleNewGameClick}>New Game</button>
-                                <button
-                                    className="goboard-btn goboard-pass"
-                                    onClick={handlePass}
-                                    disabled={currentPlayer !== humanColor || aiThinking}
-                                >
-                                    Pass
-                                </button>
-                                <div className="goboard-row">
+                                <button className="goboard-btn goboard-primary" onClick={handleNewGameClick}>New Game</button>
+                                <div className="goboard-icon-row">
                                     <button
-                                        className="goboard-btn goboard-pass"
-                                        onClick={handleUndo}
-                                        disabled={!state.moveHistory || state.moveHistory.length === 0 || aiThinking}
+                                        className="goboard-icon-btn"
+                                        onClick={() => setConfirmAction('pass')}
+                                        disabled={currentPlayer !== humanColor || aiThinking}
+                                        title="Pass"
+                                        aria-label="Pass"
                                     >
-                                        ↩ Undo
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
                                     </button>
                                     <button
-                                        className="goboard-btn goboard-resign"
-                                        onClick={handleResign}
-                                        disabled={currentPlayer !== humanColor || aiThinking}
+                                        className="goboard-icon-btn"
+                                        onClick={() => setConfirmAction('undo')}
+                                        disabled={!state.moveHistory || state.moveHistory.length === 0 || aiThinking}
+                                        title="Undo"
+                                        aria-label="Undo"
                                     >
-                                        Resign
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                                            <polyline points="1 4 1 10 7 10"></polyline>
+                                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                        </svg>
+                                    </button>
+                                    <button
+                                        className="goboard-icon-btn goboard-icon-danger"
+                                        onClick={() => setConfirmAction('resign')}
+                                        disabled={currentPlayer !== humanColor || aiThinking}
+                                        title="Resign"
+                                        aria-label="Resign"
+                                    >
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+                                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                                            <line x1="4" y1="22" x2="4" y2="15"></line>
+                                        </svg>
                                     </button>
                                 </div>
                             </>
@@ -985,6 +1000,28 @@ export default function GoBoard({ onClose, isActive }) {
                     </div>
                 </div>
             </div>
+
+            {/* Confirmation Popup */}
+            {confirmAction && (
+                <div className="goboard-modal-overlay" onClick={() => setConfirmAction(null)}>
+                    <div className="goboard-modal" onClick={e => e.stopPropagation()}>
+                        <h3 className="goboard-modal-title">¿Estás seguro?</h3>
+                        <div className="goboard-modal-buttons">
+                            <button className="goboard-color-btn" onClick={() => {
+                                if (confirmAction === 'pass') handlePass();
+                                else if (confirmAction === 'undo') handleUndo();
+                                else if (confirmAction === 'resign') handleResign();
+                                setConfirmAction(null);
+                            }}>
+                                Sí
+                            </button>
+                        </div>
+                        <button className="goboard-modal-cancel" onClick={() => setConfirmAction(null)}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* New Game Modal */}
             {showNewGameModal && (
