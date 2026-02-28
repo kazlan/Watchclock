@@ -12,6 +12,7 @@ const SKILL_KEY = 'go_ai_skill';
 const PLAYER_SKILL_KEY = 'go_player_skill';
 const COLOR_KEY = 'go_human_color';
 const HISTORY_KEY = 'go_match_history';
+const SOUND_KEY = 'go_sound_enabled';
 
 // ─── Sound Effects (Web Audio API) ────────────────────────────────────────────
 let _audioCtx = null;
@@ -22,6 +23,7 @@ function getAudioCtx() {
 
 function playStoneSound() {
     try {
+        if (typeof window._goSoundEnabled !== 'undefined' && !window._goSoundEnabled) return;
         const ctx = getAudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -38,6 +40,7 @@ function playStoneSound() {
 
 function playCaptureSound() {
     try {
+        if (typeof window._goSoundEnabled !== 'undefined' && !window._goSoundEnabled) return;
         const ctx = getAudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -54,6 +57,7 @@ function playCaptureSound() {
 
 function playGameOverSound() {
     try {
+        if (typeof window._goSoundEnabled !== 'undefined' && !window._goSoundEnabled) return;
         const ctx = getAudioCtx();
         [0, 0.12, 0.24].forEach((delay, i) => {
             const osc = ctx.createOscillator();
@@ -434,9 +438,18 @@ export default function GoBoard({ onClose, isActive }) {
     const [humanColor, setHumanColor] = useState(loadHumanColor);
     const [showNewGameModal, setShowNewGameModal] = useState(false);
     const [matchHistory, setMatchHistory] = useState(loadMatchHistory);
+    const [soundEnabled, setSoundEnabled] = useState(() => {
+        try { const v = localStorage.getItem(SOUND_KEY); return v !== 'false'; } catch (_) { return true; }
+    });
     const [hoverPos, setHoverPos] = useState(null);
     const [aiThinking, setAiThinking] = useState(false);
     const aiTimerRef = useRef(null);
+
+    // Sync sound state to global flag
+    useEffect(() => {
+        window._goSoundEnabled = soundEnabled;
+        try { localStorage.setItem(SOUND_KEY, String(soundEnabled)); } catch (_) { }
+    }, [soundEnabled]);
 
     const { board, currentPlayer, captures, consecutivePasses, previousBoard, gameOver, scores, moveCount } = state;
     const aiColor = humanColor === 'black' ? 'white' : 'black';
@@ -744,6 +757,20 @@ export default function GoBoard({ onClose, isActive }) {
         <div className="goboard-container">
             {/* Board Column (Left) */}
             <div className="goboard-board-wrap">
+                {/* Status indicator above the board */}
+                <div className="goboard-status goboard-status-top">
+                    {gameOver ? (
+                        <span className="goboard-gameover">
+                            Game Over · {winner === 'Draw' ? 'Draw!' : `${winner} wins!`}
+                        </span>
+                    ) : aiThinking ? (
+                        <span className="goboard-thinking"><span className="thinking-dots" /><span> AI thinking…</span></span>
+                    ) : (
+                        <span className={`goboard-turn ${currentPlayer}`}>
+                            {currentPlayer === humanColor ? '\u23ef Your turn' : `\u25cb AI's turn`}
+                        </span>
+                    )}
+                </div>
                 <svg
                     className="goboard-svg"
                     viewBox={`0 0 ${BOARD_PX} ${BOARD_PX}`}
@@ -844,6 +871,39 @@ export default function GoBoard({ onClose, isActive }) {
                         <span className="goboard-skill">AI: {getGoRank(skillLevel)}</span>
                     </div>
                     <div className="goboard-topbar-actions">
+                        <button
+                            className="goboard-btn goboard-close"
+                            onClick={handleExportSGF}
+                            disabled={!state.moveHistory || state.moveHistory.length === 0}
+                            title="Export SGF"
+                            aria-label="Export SGF"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                        <button
+                            className="goboard-btn goboard-close"
+                            onClick={() => setSoundEnabled(p => !p)}
+                            title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
+                            aria-label="Toggle sound"
+                        >
+                            {soundEnabled ? (
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                </svg>
+                            ) : (
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                                </svg>
+                            )}
+                        </button>
                         <button className="goboard-btn goboard-close" onClick={onClose} aria-label="Close">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
                                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -854,20 +914,6 @@ export default function GoBoard({ onClose, isActive }) {
 
                 {/* Vertical spacer pushing everything below to its natural flow */}
                 <div className="goboard-sidebar-content">
-                    {/* Status area */}
-                    <div className="goboard-status">
-                        {gameOver ? (
-                            <span className="goboard-gameover">
-                                Game Over · {winner === 'Draw' ? 'Draw!' : `${winner} wins!`}
-                            </span>
-                        ) : aiThinking ? (
-                            <span className="goboard-thinking"><span className="thinking-dots" /><span> AI thinking…</span></span>
-                        ) : (
-                            <span className={`goboard-turn ${currentPlayer}`}>
-                                {currentPlayer === humanColor ? '\u23ef Your turn' : `\u25cb AI's turn`}
-                            </span>
-                        )}
-                    </div>
 
                     {/* Scores panel */}
                     <div className="goboard-scores">
@@ -916,38 +962,26 @@ export default function GoBoard({ onClose, isActive }) {
                                     onClick={handlePass}
                                     disabled={currentPlayer !== humanColor || aiThinking}
                                 >
-                                    Pass Turn
+                                    Pass
                                 </button>
-                                <button
-                                    className="goboard-btn goboard-pass"
-                                    onClick={handleUndo}
-                                    disabled={!state.moveHistory || state.moveHistory.length === 0 || aiThinking}
-                                >
-                                    ↩ Undo
-                                </button>
-                                <button
-                                    className="goboard-btn goboard-resign"
-                                    onClick={handleResign}
-                                    style={{ background: 'transparent', padding: '6px', fontSize: '0.75rem', marginTop: '-4px', border: 'none', opacity: 0.7 }}
-                                    disabled={currentPlayer !== humanColor || aiThinking}
-                                >
-                                    Resign
-                                </button>
+                                <div className="goboard-row">
+                                    <button
+                                        className="goboard-btn goboard-pass"
+                                        onClick={handleUndo}
+                                        disabled={!state.moveHistory || state.moveHistory.length === 0 || aiThinking}
+                                    >
+                                        ↩ Undo
+                                    </button>
+                                    <button
+                                        className="goboard-btn goboard-resign"
+                                        onClick={handleResign}
+                                        disabled={currentPlayer !== humanColor || aiThinking}
+                                    >
+                                        Resign
+                                    </button>
+                                </div>
                             </>
                         )}
-                        <button
-                            className="goboard-btn goboard-export"
-                            onClick={handleExportSGF}
-                            disabled={!state.moveHistory || state.moveHistory.length === 0}
-                            title="Export match to SGF format"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" style={{ marginRight: '6px' }}>
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Export SGF
-                        </button>
                     </div>
                 </div>
             </div>
