@@ -70,7 +70,7 @@ export default function CelestialView({ onClose, isActive, location }) {
             {/* Time Controls Overlay */}
             <div className="celestial-controls">
                 <div className="celestial-info-row">
-                    <h3 className="celestial-title">Celestial Hemisphere</h3>
+                    <h3 className="celestial-title">Hemisferio celeste</h3>
                     <div className="celestial-time" onClick={resetTime} style={{ cursor: 'pointer' }} title="Click to reset to now">
                         {dateStr}
                     </div>

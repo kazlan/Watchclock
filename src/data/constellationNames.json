@@ -1,6 +1,6 @@
 [
     {
-        "name": "Andromeda",
+        "name": "Andrómeda",
         "abbr": "And",
         "ra": 0.8,
         "dec": 37.0
@@ -12,25 +12,25 @@
         "dec": -35.0
     },
     {
-        "name": "Apus",
+        "name": "Ave del Paraíso",
         "abbr": "Aps",
         "ra": 16.0,
         "dec": -75.0
     },
     {
-        "name": "Aquarius",
+        "name": "Acuario",
         "abbr": "Aqr",
         "ra": 22.3,
         "dec": -10.0
     },
     {
-        "name": "Aquila",
+        "name": "Águila",
         "abbr": "Aql",
         "ra": 19.7,
         "dec": 3.0
     },
     {
-        "name": "Ara",
+        "name": "Altar",
         "abbr": "Ara",
         "ra": 17.4,
         "dec": -56.0
@@ -42,151 +42,151 @@
         "dec": 21.0
     },
     {
-        "name": "Auriga",
+        "name": "Cochero",
         "abbr": "Aur",
         "ra": 6.0,
         "dec": 42.0
     },
     {
-        "name": "Boötes",
+        "name": "Boyero",
         "abbr": "Boo",
         "ra": 14.7,
         "dec": 31.0
     },
     {
-        "name": "Caelum",
+        "name": "Buril",
         "abbr": "Cae",
         "ra": 4.7,
         "dec": -38.0
     },
     {
-        "name": "Camelopardalis",
+        "name": "Jirafa",
         "abbr": "Cam",
         "ra": 6.1,
         "dec": 69.0
     },
     {
-        "name": "Cancer",
+        "name": "Cáncer",
         "abbr": "Cnc",
         "ra": 8.6,
         "dec": 20.0
     },
     {
-        "name": "Canes Venatici",
+        "name": "Lebreles",
         "abbr": "CVn",
         "ra": 13.1,
         "dec": 40.0
     },
     {
-        "name": "Canis Major",
+        "name": "Can Mayor",
         "abbr": "CMa",
         "ra": 6.8,
         "dec": -22.0
     },
     {
-        "name": "Canis Minor",
+        "name": "Can Menor",
         "abbr": "CMi",
         "ra": 7.6,
         "dec": 6.0
     },
     {
-        "name": "Capricornus",
+        "name": "Capricornio",
         "abbr": "Cap",
         "ra": 21.0,
         "dec": -18.0
     },
     {
-        "name": "Carina",
+        "name": "Quilla",
         "abbr": "Car",
         "ra": 8.7,
         "dec": -63.0
     },
     {
-        "name": "Cassiopeia",
+        "name": "Casiopea",
         "abbr": "Cas",
         "ra": 1.0,
         "dec": 62.0
     },
     {
-        "name": "Centaurus",
+        "name": "Centauro",
         "abbr": "Cen",
         "ra": 13.1,
         "dec": -47.0
     },
     {
-        "name": "Cepheus",
+        "name": "Cefeo",
         "abbr": "Cep",
         "ra": 22.0,
         "dec": 71.0
     },
     {
-        "name": "Cetus",
+        "name": "Ballena",
         "abbr": "Cet",
         "ra": 1.7,
         "dec": -7.0
     },
     {
-        "name": "Chamaeleon",
+        "name": "Camaleón",
         "abbr": "Cha",
         "ra": 10.7,
         "dec": -79.0
     },
     {
-        "name": "Circinus",
+        "name": "Compás",
         "abbr": "Cir",
         "ra": 14.6,
         "dec": -64.0
     },
     {
-        "name": "Columba",
+        "name": "Paloma",
         "abbr": "Col",
         "ra": 5.9,
         "dec": -35.0
     },
     {
-        "name": "Coma Berenices",
+        "name": "Cab. de Berenice",
         "abbr": "Com",
         "ra": 12.8,
         "dec": 22.0
     },
     {
-        "name": "Corona Australis",
+        "name": "Corona Austral",
         "abbr": "CrA",
         "ra": 19.0,
         "dec": -40.0
     },
     {
-        "name": "Corona Borealis",
+        "name": "Corona Boreal",
         "abbr": "CrB",
         "ra": 15.8,
         "dec": 33.0
     },
     {
-        "name": "Corvus",
+        "name": "Cuervo",
         "abbr": "Crv",
         "ra": 12.4,
         "dec": -18.0
     },
     {
-        "name": "Crater",
+        "name": "Copa",
         "abbr": "Crt",
         "ra": 11.4,
         "dec": -15.0
     },
     {
-        "name": "Crux",
+        "name": "Cruz del Sur",
         "abbr": "Cru",
         "ra": 12.4,
         "dec": -60.0
     },
     {
-        "name": "Cygnus",
+        "name": "Cisne",
         "abbr": "Cyg",
         "ra": 20.6,
         "dec": 42.0
     },
     {
-        "name": "Delphinus",
+        "name": "Delfín",
         "abbr": "Del",
         "ra": 20.7,
         "dec": 12.0
@@ -198,73 +198,73 @@
         "dec": -60.0
     },
     {
-        "name": "Draco",
+        "name": "Dragón",
         "abbr": "Dra",
         "ra": 15.1,
         "dec": 67.0
     },
     {
-        "name": "Equuleus",
+        "name": "Caballito",
         "abbr": "Equ",
         "ra": 21.2,
         "dec": 8.0
     },
     {
-        "name": "Eridanus",
+        "name": "Eridano",
         "abbr": "Eri",
         "ra": 3.3,
         "dec": -29.0
     },
     {
-        "name": "Fornax",
+        "name": "Horno",
         "abbr": "For",
         "ra": 2.8,
         "dec": -31.0
     },
     {
-        "name": "Gemini",
+        "name": "Géminis",
         "abbr": "Gem",
         "ra": 7.1,
         "dec": 23.0
     },
     {
-        "name": "Grus",
+        "name": "Grulla",
         "abbr": "Gru",
         "ra": 22.5,
         "dec": -47.0
     },
     {
-        "name": "Hercules",
+        "name": "Hércules",
         "abbr": "Her",
         "ra": 17.4,
         "dec": 27.0
     },
     {
-        "name": "Horologium",
+        "name": "Reloj",
         "abbr": "Hor",
         "ra": 3.3,
         "dec": -54.0
     },
     {
-        "name": "Hydra",
+        "name": "Hidra",
         "abbr": "Hya",
         "ra": 10.2,
         "dec": -20.0
     },
     {
-        "name": "Hydrus",
+        "name": "Hidra Austral",
         "abbr": "Hyi",
         "ra": 2.3,
         "dec": -70.0
     },
     {
-        "name": "Indus",
+        "name": "Indio",
         "abbr": "Ind",
         "ra": 21.5,
         "dec": -55.0
     },
     {
-        "name": "Lacerta",
+        "name": "Lagarto",
         "abbr": "Lac",
         "ra": 22.5,
         "dec": 45.0
@@ -276,13 +276,13 @@
         "dec": 15.0
     },
     {
-        "name": "Leo Minor",
+        "name": "Leo Menor",
         "abbr": "LMi",
         "ra": 10.2,
         "dec": 33.0
     },
     {
-        "name": "Lepus",
+        "name": "Liebre",
         "abbr": "Lep",
         "ra": 5.6,
         "dec": -19.0
@@ -294,67 +294,67 @@
         "dec": -15.0
     },
     {
-        "name": "Lupus",
+        "name": "Lobo",
         "abbr": "Lup",
         "ra": 15.2,
         "dec": -43.0
     },
     {
-        "name": "Lynx",
+        "name": "Lince",
         "abbr": "Lyn",
         "ra": 7.9,
         "dec": 48.0
     },
     {
-        "name": "Lyra",
+        "name": "Lira",
         "abbr": "Lyr",
         "ra": 18.9,
         "dec": 37.0
     },
     {
-        "name": "Mensa",
+        "name": "Mesa",
         "abbr": "Men",
         "ra": 5.4,
         "dec": -77.0
     },
     {
-        "name": "Microscopium",
+        "name": "Microscopio",
         "abbr": "Mic",
         "ra": 21.0,
         "dec": -36.0
     },
     {
-        "name": "Monoceros",
+        "name": "Unicornio",
         "abbr": "Mon",
         "ra": 7.1,
         "dec": -4.0
     },
     {
-        "name": "Musca",
+        "name": "Mosca",
         "abbr": "Mus",
         "ra": 12.5,
         "dec": -70.0
     },
     {
-        "name": "Norma",
+        "name": "Escuadra",
         "abbr": "Nor",
         "ra": 16.1,
         "dec": -50.0
     },
     {
-        "name": "Octans",
+        "name": "Octante",
         "abbr": "Oct",
         "ra": 22.0,
         "dec": -82.0
     },
     {
-        "name": "Ophiuchus",
+        "name": "Ofiuco",
         "abbr": "Oph",
         "ra": 17.4,
         "dec": -8.0
     },
     {
-        "name": "Orion",
+        "name": "Orión",
         "abbr": "Ori",
         "ra": 5.6,
         "dec": 3.0
@@ -366,139 +366,139 @@
         "dec": -65.0
     },
     {
-        "name": "Pegasus",
+        "name": "Pegaso",
         "abbr": "Peg",
         "ra": 22.7,
         "dec": 19.0
     },
     {
-        "name": "Perseus",
+        "name": "Perseo",
         "abbr": "Per",
         "ra": 3.4,
         "dec": 45.0
     },
     {
-        "name": "Phoenix",
+        "name": "Fénix",
         "abbr": "Phe",
         "ra": 0.9,
         "dec": -48.0
     },
     {
-        "name": "Pictor",
+        "name": "Caballete",
         "abbr": "Pic",
         "ra": 5.7,
         "dec": -53.0
     },
     {
-        "name": "Pisces",
+        "name": "Piscis",
         "abbr": "Psc",
         "ra": 0.5,
         "dec": 13.0
     },
     {
-        "name": "Piscis Austrinus",
+        "name": "Pez Austral",
         "abbr": "PsA",
         "ra": 22.3,
         "dec": -31.0
     },
     {
-        "name": "Puppis",
+        "name": "Popa",
         "abbr": "Pup",
         "ra": 7.3,
         "dec": -31.0
     },
     {
-        "name": "Pyxis",
+        "name": "Brújula",
         "abbr": "Pyx",
         "ra": 8.9,
         "dec": -27.0
     },
     {
-        "name": "Reticulum",
+        "name": "Retículo",
         "abbr": "Ret",
         "ra": 3.9,
         "dec": -62.0
     },
     {
-        "name": "Sagitta",
+        "name": "Flecha",
         "abbr": "Sge",
         "ra": 19.7,
         "dec": 19.0
     },
     {
-        "name": "Sagittarius",
+        "name": "Sagitario",
         "abbr": "Sgr",
         "ra": 19.1,
         "dec": -29.0
     },
     {
-        "name": "Scorpius",
+        "name": "Escorpio",
         "abbr": "Sco",
         "ra": 16.9,
         "dec": -37.0
     },
     {
-        "name": "Sculptor",
+        "name": "Escultor",
         "abbr": "Scl",
         "ra": 0.4,
         "dec": -33.0
     },
     {
-        "name": "Scutum",
+        "name": "Escudo",
         "abbr": "Sct",
         "ra": 18.7,
         "dec": -10.0
     },
     {
-        "name": "Serpens",
+        "name": "Serpiente",
         "abbr": "Ser",
         "ra": 16.9,
         "dec": 6.0
     },
     {
-        "name": "Sextans",
+        "name": "Sextante",
         "abbr": "Sex",
         "ra": 10.3,
         "dec": -2.0
     },
     {
-        "name": "Taurus",
+        "name": "Tauro",
         "abbr": "Tau",
         "ra": 4.7,
         "dec": 16.0
     },
     {
-        "name": "Telescopium",
+        "name": "Telescopio",
         "abbr": "Tel",
         "ra": 19.3,
         "dec": -51.0
     },
     {
-        "name": "Triangulum",
+        "name": "Triángulo",
         "abbr": "Tri",
         "ra": 2.2,
         "dec": 32.0
     },
     {
-        "name": "Triangulum Australe",
+        "name": "Triángulo Austral",
         "abbr": "TrA",
         "ra": 16.1,
         "dec": -65.0
     },
     {
-        "name": "Tucana",
+        "name": "Tucán",
         "abbr": "Tuc",
         "ra": 23.8,
         "dec": -66.0
     },
     {
-        "name": "Ursa Major",
+        "name": "Osa Mayor",
         "abbr": "UMa",
         "ra": 11.1,
         "dec": 51.0
     },
     {
-        "name": "Ursa Minor",
+        "name": "Osa Menor",
         "abbr": "UMi",
         "ra": 15.0,
         "dec": 78.0
@@ -516,13 +516,13 @@
         "dec": -4.0
     },
     {
-        "name": "Volans",
+        "name": "Pez Volador",
         "abbr": "Vol",
         "ra": 7.8,
         "dec": -69.0
     },
     {
-        "name": "Vulpecula",
+        "name": "Zorra",
         "abbr": "Vul",
         "ra": 20.2,
         "dec": 25.0
