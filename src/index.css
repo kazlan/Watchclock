@@ -102,9 +102,12 @@
   --bg-base: #0f0804;
 
   /* Aurora Colors Steam - Glowing copper, orange, and brass */
-  --aurora-1: rgba(217, 119, 6, 0.4); /* Amber/Copper */
-  --aurora-2: rgba(180, 83, 9, 0.4);  /* Dark Orange/Rust */
-  --aurora-3: rgba(251, 146, 60, 0.3); /* Glowing Orange */
+  --aurora-1: rgba(217, 119, 6, 0.4);
+  /* Amber/Copper */
+  --aurora-2: rgba(180, 83, 9, 0.4);
+  /* Dark Orange/Rust */
+  --aurora-3: rgba(251, 146, 60, 0.3);
+  /* Glowing Orange */
 
   /* App container panel - practically invisible */
   --app-panel-bg: transparent;
@@ -112,18 +115,24 @@
   --app-panel-shadow: none;
 
   /* Clock & Widget base panels */
-  --panel-bg: rgba(67, 34, 15, 0.4); /* Brown metallic */
+  --panel-bg: rgba(67, 34, 15, 0.4);
+  /* Brown metallic */
   --panel-border: rgba(217, 119, 6, 0.2);
   --panel-shadow: inset 0 0 0 1px rgba(217, 119, 6, 0.1), 0 10px 40px rgba(0, 0, 0, 0.6);
 
   /* Text */
-  --text-primary: #fcd34d; /* Pale Gold */
-  --text-secondary: #b45309; /* Deep Orange/Rust */
+  --text-primary: #fcd34d;
+  /* Pale Gold */
+  --text-secondary: #d4a574;
+  /* Warm sandy brass — readable on dark bg */
 
   /* Accents */
-  --accent-clock-h: #d97706; /* Amber/Copper */
-  --accent-clock-m: #f59e0b; /* Golden Yellow */
-  --accent-clock-s: #ef4444; /* Red/Heat */
+  --accent-clock-h: #d97706;
+  /* Amber/Copper */
+  --accent-clock-m: #f59e0b;
+  /* Golden Yellow */
+  --accent-clock-s: #ef4444;
+  /* Red/Heat */
 
   --timer-focus: #f59e0b;
   --timer-coffee: #d97706;
