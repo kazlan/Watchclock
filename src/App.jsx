@@ -7,6 +7,7 @@ import SpotifyPlayer from './components/SpotifyPlayer/SpotifyPlayer'
 import SpotifyLibrary from './components/SpotifyLibrary/SpotifyLibrary'
 import CalendarView from './components/CalendarView/CalendarView'
 import CelestialView from './components/CelestialView/CelestialView'
+import GoBoard from './components/GoBoard/GoBoard'
 import SteampunkBackground from './components/SteampunkBackground/SteampunkBackground'
 import './index.css'
 import './index.css'
@@ -113,6 +114,18 @@ const TelescopeIcon = () => (
     <path d="M14.12 9.12a2.82 2.82 0 1 0-3.99-4 2.82 2.82 0 0 0 3.99 4z"></path>
     <path d="m8 15 2.5-2.5"></path>
     <path d="m11 18 2.5-2.5"></path>
+  </svg>
+);
+
+const GoIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <line x1="3" y1="9" x2="21" y2="9" />
+    <line x1="3" y1="15" x2="21" y2="15" />
+    <line x1="9" y1="3" x2="9" y2="21" />
+    <line x1="15" y1="3" x2="15" y2="21" />
+    <circle cx="9" cy="9" r="1.5" fill="currentColor" />
+    <circle cx="15" cy="15" r="1.5" fill="currentColor" />
   </svg>
 );
 
@@ -296,6 +309,9 @@ function App() {
           <button onClick={() => handleViewChange('celestial')} className="theme-toggle-btn" aria-label="View Celestial Hemisphere">
             <TelescopeIcon />
           </button>
+          <button onClick={() => handleViewChange('go')} className="theme-toggle-btn" aria-label="Play Go">
+            <GoIcon />
+          </button>
           {weather && (
             <div className={`weather-widget ${theme}-weather`}>
               <div className="weather-icon">{getWeatherIcon(weather.code)}</div>
@@ -380,6 +396,9 @@ function App() {
                 )}
                 {backViewComponent === 'celestial' && (
                   <CelestialView onClose={() => handleViewChange('dashboard')} isActive={activeView === 'celestial'} location={weather?.location} />
+                )}
+                {backViewComponent === 'go' && (
+                  <GoBoard onClose={() => handleViewChange('dashboard')} isActive={activeView === 'go'} />
                 )}
               </div>
             </div>
