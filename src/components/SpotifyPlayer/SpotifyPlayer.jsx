@@ -116,11 +116,15 @@ const SpotifyPlayer = ({ isHidden, onOpenLibrary }) => {
             setPlayer(spotifyPlayer);
 
             // Ready State
-            spotifyPlayer.addListener('ready', ({ device_id }) => {
+            spotifyPlayer.addListener('ready', async ({ device_id }) => {
                 console.log('Ready with Device ID', device_id);
                 setDeviceId(device_id);
-                // We do NOT auto-transfer here to avoid startling the user.
-                // We will show a "Connect" or "Transfer" button.
+
+                // Auto-transfer playback on load so we don't hold at "Reproductor Listo"
+                const validToken = await getValidToken();
+                if (validToken) {
+                    transferPlaybackHere(device_id, validToken);
+                }
             });
 
             spotifyPlayer.addListener('not_ready', ({ device_id }) => {
